@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>阿玲越南小吃</title>
+<title>12月早午餐</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
     :root {
-        --primary: #f1c40f;
-        --primary-dark: #f39c12;
-        --bg: #fffef2;
+        --primary: #00b900;
+        --primary-dark: #009900;
+        --bg: #f4f6f8;
         --card: #ffffff;
         --text: #1f2937;
         --muted: #6b7280;
@@ -97,7 +97,7 @@
 </head>
 
 <body>
-<div class="header-banner">🍱 阿玲越南小吃</div>
+<div class="header-banner">🥖 12月早午餐</div>
 
 <nav class="sticky-nav" id="main-nav"></nav>
 
@@ -168,95 +168,60 @@
 <script>
 // --- CORE DATA CONFIG ---
 let menuConfig = [
-  { id: "soup1", title: "清湯牛骨湯類 (Nước súp bò)", type: "flat", items: [
-      {name: "牛肉河粉 (Phở bò tái)", price: 120},
-      {name: "牛肉米粉 (Bún bò tái)", price: 120},
-      {name: "海鮮河粉 (Phở Hải Sản)", price: 120},
-      {name: "海鮮米粉 (Bún Hải Sản)", price: 120},
-      {name: "牛肉湯 (Canh Thịt Bò)", price: 100},
-      {name: "海鮮湯 (Canh Hải Sản)", price: 100},
-      {name: "河粉湯 (Phở Nước)", price: 80},
-      {name: "米粉湯 (Bún Nước)", price: 80}
+  { id: "b1", title: "吐司", type: "bread", breadName: "吐司", addons: [{name: "加蛋", price: 10}, {name: "加起司", price: 10}], items: [
+      {name: "煎蛋", price: 30, noEgg: true}, {name: "香雞", price: 35}, {name: "火腿", price: 35}, {name: "肉鬆", price: 35}, {name: "歐姆蛋", price: 40}, {name: "漢堡肉", price: 40}, {name: "培根", price: 40}, {name: "玉米蛋", price: 40}, {name: "鮮蔬", price: 40}, {name: "素火腿", price: 40}, {name: "薯餅", price: 45}, {name: "燻雞", price: 45}, {name: "里肌豬排", price: 50}, {name: "鮪魚", price: 50}, {name: "蟹肉棒", price: 50}, {name: "鮪魚蟹肉棒", price: 50}, {name: "雞柳(2條)", price: 50}, {name: "德式香腸", price: 50}, {name: "鱈魚起司", price: 65, noCheese: true}, {name: "厚牛起司", price: 65, noCheese: true}, {name: "香草厚豬", price: 65}, {name: "原味卡拉雞", price: 65}, {name: "辣味卡拉雞", price: 65}, {name: "菲力雞", price: 65}, {name: "和風燒肉(牛)", price: 65}, {name: "真的蝦", price: 70}, {name: "香煎雞腿排", price: 75}, {name: "海陸豬(魚+豬排)", price: 85, noCheese: true}, {name: "海陸牛(魚+厚牛)", price: 95, noCheese: true}, {name: "[泡菜] 豬排", price: 65}, {name: "[泡菜] 厚牛", price: 80}, {name: "[泡菜] 燒肉(牛)", price: 80}, {name: "[花生] 培根", price: 45}, {name: "[花生] 薯餅", price: 50}, {name: "[花生] 豬排", price: 55}, {name: "[花生] 厚牛起司", price: 70, noCheese: true}, {name: "[花生] 原味卡拉", price: 70}, {name: "[花生] 辣味卡拉", price: 70},
+      {name: "[果醬] 原味", price: 15}, {name: "[果醬] 草莓", price: 25}, {name: "[果醬] 花生", price: 25}, {name: "[果醬] 巧克力", price: 25}, {name: "[果醬] 奶酥", price: 25}, {name: "[果醬] 香蒜", price: 25}, {name: "[果醬] 煉乳", price: 25}, {name: "[果醬] 奶油", price: 25}, {name: "[果醬] 切達起司", price: 35}
   ]},
-  { id: "soup2", title: "泰式酸辣豬骨湯 (Nước Súp Chua Cay Thái)", type: "flat", items: [
-      {name: "牛肉河粉 (Phở bò tái)", price: 120},
-      {name: "牛肉米粉 (Bún bò tái)", price: 120},
-      {name: "海鮮河粉 (Phở Hải Sản)", price: 120},
-      {name: "海鮮米粉 (Bún Hải Sản)", price: 120},
-      {name: "牛肉湯 (Canh Thịt Bò)", price: 100},
-      {name: "海鮮湯 (Canh Hải Sản)", price: 100},
-      {name: "河粉湯 (Phở Nước)", price: 80},
-      {name: "米粉湯 (Bún Nước)", price: 80}
+  { id: "b2", title: "漢堡", type: "bread", breadName: "漢堡", addons: [{name: "加蛋", price: 10}, {name: "加起司", price: 10}], items: [
+      {name: "煎蛋", price: 35, noEgg: true}, {name: "香雞", price: 40}, {name: "火腿", price: 40}, {name: "肉鬆", price: 40}, {name: "歐姆蛋", price: 45}, {name: "漢堡肉", price: 45}, {name: "培根", price: 45}, {name: "玉米蛋", price: 45}, {name: "鮮蔬", price: 45}, {name: "素火腿", price: 45}, {name: "薯餅", price: 50}, {name: "燻雞", price: 50}, {name: "里肌豬排", price: 55}, {name: "鮪魚", price: 55}, {name: "蟹肉棒", price: 55}, {name: "鮪魚蟹肉棒", price: 55}, {name: "雞柳(2條)", price: 55}, {name: "德式香腸", price: 55}, {name: "鱈魚起司", price: 70, noCheese: true}, {name: "厚牛起司", price: 70, noCheese: true}, {name: "香草厚豬", price: 70}, {name: "原味卡拉雞", price: 70}, {name: "辣味卡拉雞", price: 70}, {name: "菲力雞", price: 70}, {name: "和風燒肉(牛)", price: 70}, {name: "真的蝦", price: 75}, {name: "香煎雞腿排", price: 80}, {name: "海陸豬(魚+豬排)", price: 90, noCheese: true}, {name: "海陸牛(魚+厚牛)", price: 100, noCheese: true}, {name: "[泡菜] 豬排", price: 70}, {name: "[泡菜] 厚牛", price: 85}, {name: "[泡菜] 燒肉(牛)", price: 85}, {name: "[花生] 培根", price: 50}, {name: "[花生] 薯餅", price: 55}, {name: "[花生] 豬排", price: 60}, {name: "[花生] 厚牛起司", price: 75, noCheese: true}, {name: "[花生] 原味卡拉", price: 75}, {name: "[花生] 辣味卡拉", price: 75}
   ]},
-  { id: "soup3", title: "番茄豬骨湯 (Nước Súp Riêu Cua)", type: "flat", items: [
-      {name: "蟹醬米粉 (Bún Riêu Cua)", price: 120},
-      {name: "蟹醬河粉 (Phở Riêu Cua)", price: 120},
-      {name: "牛肉河粉 (Phở bò tái)", price: 120},
-      {name: "牛肉米粉 (Bún Bò Tái)", price: 120},
-      {name: "海鮮河粉 (Phở Hải Sản)", price: 120},
-      {name: "海鮮米粉 (Bún Hải Sản)", price: 120},
-      {name: "牛肉湯 (Canh Thịt Bò)", price: 100},
-      {name: "海鮮湯 (Canh Hải Sản)", price: 100},
-      {name: "河粉湯 (Phở Nước)", price: 80},
-      {name: "米粉湯 (Bún Nước)", price: 80}
+  { id: "b3", title: "滿福堡", type: "bread", breadName: "滿福堡", addons: [{name: "加蛋", price: 10}, {name: "加起司", price: 10}], items: [
+      {name: "煎蛋", price: 35, noEgg: true}, {name: "香雞", price: 40}, {name: "火腿", price: 40}, {name: "肉鬆", price: 40}, {name: "歐姆蛋", price: 45}, {name: "漢堡肉", price: 45}, {name: "培根", price: 45}, {name: "玉米蛋", price: 45}, {name: "鮮蔬", price: 45}, {name: "素火腿", price: 45}, {name: "薯餅", price: 50}, {name: "燻雞", price: 50}, {name: "里肌豬排", price: 55}, {name: "鮪魚", price: 55}, {name: "蟹肉棒", price: 55}, {name: "鮪魚蟹肉棒", price: 55}, {name: "雞柳(2條)", price: 55}, {name: "德式香腸", price: 55}, {name: "鱈魚起司", price: 70, noCheese: true}, {name: "厚牛起司", price: 70, noCheese: true}, {name: "香草厚豬", price: 70}, {name: "原味卡拉雞", price: 70}, {name: "辣味卡拉雞", price: 70}, {name: "菲力雞", price: 70}, {name: "和風燒肉(牛)", price: 70}, {name: "真的蝦", price: 75}, {name: "香煎雞腿排", price: 80}, {name: "海陸豬(魚+豬排)", price: 90, noCheese: true}, {name: "海陸牛(魚+厚牛)", price: 100, noCheese: true}, {name: "[泡菜] 豬排", price: 70}, {name: "[泡菜] 厚牛", price: 85}, {name: "[泡菜] 燒肉(牛)", price: 85}, {name: "[花生] 培根", price: 50}, {name: "[花生] 薯餅", price: 55}, {name: "[花生] 豬排", price: 60}, {name: "[花生] 厚牛起司", price: 75, noCheese: true}, {name: "[花生] 原味卡拉", price: 75}, {name: "[花生] 辣味卡拉", price: 75},
+      {name: "[果醬] 原味", price: 20}, {name: "[果醬] 草莓", price: 30}, {name: "[果醬] 花生", price: 30}, {name: "[果醬] 巧克力", price: 30}, {name: "[果醬] 奶酥", price: 30}, {name: "[果醬] 香蒜", price: 30}, {name: "[果醬] 煉乳", price: 30}, {name: "[果醬] 奶油", price: 30}, {name: "[果醬] 切達起司", price: 40}
   ]},
-  { id: "soup4", title: "順化, 香茅牛骨湯 (Nước Súp bò Huế)", type: "flat", items: [
-      {name: "牛腱大米粉 (Bún bò Huế)", price: 120},
-      {name: "牛腱河粉 (Phở bò Huế)", price: 120},
-      {name: "牛腱米粉 (Bún bò Huế (+Nho))", price: 120},
-      {name: "牛肉河粉 (Phở Bò Tái)", price: 120},
-      {name: "牛肉米粉 (Bún Bò Tái)", price: 120},
-      {name: "海鮮河粉 (Phở Hải Sản)", price: 120},
-      {name: "海鮮米粉 (Bún Hải Sản)", price: 120},
-      {name: "牛肉湯 (Canh Thịt Bò)", price: 100},
-      {name: "海鮮湯 (Canh Hải Sản)", price: 100},
-      {name: "河粉/米粉湯 (Phở/Bún Nước)", price: 80}
+  { id: "b4", title: "乳酪堡", type: "bread", breadName: "乳酪堡", addons: [{name: "加蛋", price: 10}, {name: "加起司", price: 10}], items: [
+      {name: "煎蛋", price: 40, noEgg: true}, {name: "香雞", price: 45}, {name: "火腿", price: 45}, {name: "肉鬆", price: 45}, {name: "歐姆蛋", price: 50}, {name: "漢堡肉", price: 50}, {name: "培根", price: 50}, {name: "玉米蛋", price: 50}, {name: "鮮蔬", price: 50}, {name: "素火腿", price: 50}, {name: "薯餅", price: 55}, {name: "燻雞", price: 55}, {name: "里肌豬排", price: 60}, {name: "鮪魚", price: 60}, {name: "蟹肉棒", price: 60}, {name: "鮪魚蟹肉棒", price: 60}, {name: "雞柳(2條)", price: 60}, {name: "德式香腸", price: 60}, {name: "鱈魚起司", price: 75, noCheese: true}, {name: "厚牛起司", price: 75, noCheese: true}, {name: "香草厚豬", price: 75}, {name: "原味卡拉雞", price: 75}, {name: "辣味卡拉雞", price: 75}, {name: "菲力雞", price: 75}, {name: "和風燒肉(牛)", price: 75}, {name: "真的蝦", price: 80}, {name: "香煎雞腿排", price: 85}, {name: "海陸豬(魚+豬排)", price: 95, noCheese: true}, {name: "海陸牛(魚+厚牛)", price: 105, noCheese: true}, {name: "[泡菜] 豬排", price: 75}, {name: "[泡菜] 厚牛", price: 90}, {name: "[泡菜] 燒肉(牛)", price: 90}, {name: "[花生] 培根", price: 55}, {name: "[花生] 薯餅", price: 60}, {name: "[花生] 豬排", price: 65}, {name: "[花生] 厚牛起司", price: 80, noCheese: true}, {name: "[花生] 原味卡拉", price: 80}, {name: "[花生] 辣味卡拉", price: 80},
+      {name: "[果醬] 原味", price: 30}, {name: "[果醬] 草莓", price: 40}, {name: "[果醬] 花生", price: 40}, {name: "[果醬] 巧克力", price: 40}, {name: "[果醬] 奶酥", price: 40}, {name: "[果醬] 香蒜", price: 40}, {name: "[果醬] 煉乳", price: 40}, {name: "[果醬] 奶油", price: 40}, {name: "[果醬] 切達起司", price: 50}
   ]},
-  { id: "soup5", title: "紅燒牛肉湯 (Bò Kho)", type: "flat", items: [
-      {name: "牛肉河粉 (Phở Bò Kho)", price: 130},
-      {name: "牛肉米粉 (Bún Bò Kho)", price: 130},
-      {name: "牛肉麵包1條 (Bò Kho Bánh Mì 1 ổ)", price: 130},
-      {name: "牛肉麵包2條 (Bò Kho Bánh Mì 2 ổ)", price: 160},
-      {name: "牛肉湯 (Canh Thịt Bò)", price: 110},
-      {name: "海鮮湯 (Canh Hải Sản)", price: 100},
-      {name: "河粉湯 (Phở Nước)", price: 100},
-      {name: "米粉湯 (Bún Nước)", price: 80}
+  { id: "b5", title: "可頌", type: "bread", breadName: "可頌", addons: [{name: "加蛋", price: 10}, {name: "加起司", price: 10}], items: [
+      {name: "煎蛋", price: 45, noEgg: true}, {name: "香雞", price: 50}, {name: "火腿", price: 50}, {name: "肉鬆", price: 50}, {name: "歐姆蛋", price: 55}, {name: "漢堡肉", price: 55}, {name: "培根", price: 55}, {name: "玉米蛋", price: 55}, {name: "鮮蔬", price: 55}, {name: "素火腿", price: 55}, {name: "薯餅", price: 60}, {name: "燻雞", price: 60}, {name: "里肌豬排", price: 65}, {name: "鮪魚", price: 65}, {name: "蟹肉棒", price: 65}, {name: "鮪魚蟹肉棒", price: 65}, {name: "雞柳(2條)", price: 65}, {name: "德式香腸", price: 65}, {name: "鱈魚起司", price: 80, noCheese: true}, {name: "厚牛起司", price: 80, noCheese: true}, {name: "香草厚豬", price: 80}, {name: "原味卡拉雞", price: 80}, {name: "辣味卡拉雞", price: 80}, {name: "菲力雞", price: 80}, {name: "和風燒肉(牛)", price: 80}, {name: "真的蝦", price: 85}, {name: "香煎雞腿排", price: 90}, {name: "海陸豬(魚+豬排)", price: 100, noCheese: true}, {name: "海陸牛(魚+厚牛)", price: 110, noCheese: true}, {name: "[泡菜] 豬排", price: 80}, {name: "[泡菜] 厚牛", price: 95}, {name: "[泡菜] 燒肉(牛)", price: 95}, {name: "[花生] 培根", price: 60}, {name: "[花生] 薯餅", price: 65}, {name: "[花生] 豬排", price: 70}, {name: "[花生] 厚牛起司", price: 85, noCheese: true}, {name: "[花生] 原味卡拉", price: 85}, {name: "[花生] 辣味卡拉", price: 85},
+      {name: "[果醬] 原味", price: 35}, {name: "[果醬] 草莓", price: 45}, {name: "[果醬] 花生", price: 45}, {name: "[果醬] 巧克力", price: 45}, {name: "[果醬] 奶酥", price: 45}, {name: "[果醬] 香蒜", price: 45}, {name: "[果醬] 煉乳", price: 45}, {name: "[果醬] 奶油", price: 45}, {name: "[果醬] 切達起司", price: 55}
   ]},
-  { id: "banhmi", title: "麵包類 (Bánh mì) & Cà phê", type: "flat", items: [
-      {name: "咖啡 (Càfê)", price: 60},
-      {name: "空麵包 (Bánh mì không)", price: 30},
-      {name: "菜麵包 (Bánh mì rau)", price: 60},
-      {name: "菜蛋麵包 (Bánh mì rau trứng)", price: 70},
-      {name: "豬肉火腿麵包 (Bánh Mì thịt heo)", price: 80},
-      {name: "雞肉火腿麵包 (Bánh Mì thịt gà)", price: 80},
-      {name: "火腿麵包 (Bánh mì Chả Lụa)", price: 80},
-      {name: "豬肉蛋麵包 (Bánh Mì Thịt Heo Trứng)", price: 90},
-      {name: "雞肉蛋麵包 (Bánh Mì Thịt Gà Trứng)", price: 90},
-      {name: "火腿蛋麵包 (Bánh Mì Chả Lụa Trứng)", price: 90},
-      {name: "綜合麵包 (Bánh mì thập cẩm)", price: 100},
-      {name: "牛肉火腿麵包 (Bánh mì thịt bò)", price: 100},
-      {name: "牛肉蛋麵包 (Bánh mì thịt bò thêm Trứng)", price: 100},
-      {name: "綜合牛 (Thập Cẩm Bò)", price: 110},
-      {name: "豬排火腿 / 豬排蛋麵包", price: 100}
+  { id: "b6", title: "厚片", type: "bread", breadName: "厚片", addons: [], items: [
+      {name: "[果醬] 原味", price: 25}, {name: "[果醬] 草莓", price: 35}, {name: "[果醬] 花生", price: 35}, {name: "[果醬] 巧克力", price: 35}, {name: "[果醬] 奶酥", price: 35}, {name: "[果醬] 香蒜", price: 35}, {name: "[果醬] 煉乳", price: 35}, {name: "[果醬] 奶油", price: 35}, {name: "[果醬] 切達起司", price: 45}, {name: "[果醬] 奶油蜜糖", price: 40}, {name: "[果醬] 奶油蜜糖吐司", price: 50}
   ]},
-  { id: "dry", title: "涼拌粉類 (Gỏi Bún, Phở)", type: "flat", items: [
-      {name: "鮮蝦春捲 (Gỏi Cuốn - 3 cuốn)", price: 80},
-      {name: "鮮蝦春捲 (Gỏi Cuốn - 4 cuốn)", price: 100},
-      {name: "豬排拌米粉 (Bún thịt nướng)", price: 110},
-      {name: "豬排拌河粉 (Phở thịt nướng)", price: 110},
-      {name: "鮮蝦涼拌米粉 (Bún Trộn Tôm)", price: 110},
-      {name: "鮮蝦涼拌河粉 (Phở Trộn Tôm)", price: 110},
-      {name: "牛肉拌河粉 (Phở Bò Xào)", price: 110},
-      {name: "牛肉拌米粉 (Bún Bò Xào)", price: 110},
-      {name: "XO醬海鮮炒飯 (Cơm Rang Hải Sản)", price: 120},
-      {name: "XO醬牛肉炒飯 (Cơm Rang Thịt Bò)", price: 120},
-      {name: "綜合炒飯海鮮牛肉 (Cơm Rang Thập Cẩm)", price: 150}
+  { id: "b7", title: "蛋餅", type: "bread", breadName: "蛋餅", addons: [{name: "加起司", price: 10}], items: [
+      {name: "原味", price: 30, noCheese: true}, {name: "起司", price: 35, noCheese: true}, {name: "火腿", price: 35}, {name: "熱狗(2支)", price: 35}, {name: "香雞", price: 35}, {name: "肉鬆", price: 35}, {name: "蔬菜", price: 35}, {name: "玉米", price: 35}, {name: "素火腿", price: 40}, {name: "漢堡肉", price: 40}, {name: "培根", price: 40}, {name: "薯餅", price: 40}, {name: "燻雞", price: 45}, {name: "里肌豬排", price: 50}, {name: "鮪魚", price: 50}, {name: "蟹肉棒", price: 50}, {name: "鮪魚蟹肉棒", price: 50}, {name: "雞柳", price: 50}, {name: "德式香腸", price: 50}, {name: "厚牛", price: 60}, {name: "鱈魚條", price: 60}, {name: "原味卡拉雞", price: 65}, {name: "辣味卡拉雞", price: 65}, {name: "菲力雞", price: 65}, {name: "香煎雞腿排", price: 75}, {name: "泡菜", price: 40}, {name: "泡菜豬排", price: 65}, {name: "泡菜厚牛", price: 80}, {name: "泡菜燒肉(牛)", price: 80}, {name: "煎餅菓子風風味", price: 65}
   ]},
-  { id: "addon", title: "加料 (Thêm thịt)", type: "flat", items: [
-      {name: "加料: 海鮮 (Hải Sản) / 牛肉 (Thịt Bò)", price: 50},
-      {name: "加料: 蟹肉 (Riêu Cua) / 豬腳 (Giò heo)", price: 50},
-      {name: "加料: 雞蛋 (trứng gà)", price: 15},
-      {name: "加料: 粉 (bún) / 菜 (rau) / 豆芽 (giá)", price: 10}
+  { id: "b8", title: "蔥抓餅", type: "bread", breadName: "蔥抓餅", addons: [{name: "加起司", price: 10}], items: [
+      {name: "原味", price: 45, noCheese: true}, {name: "起司", price: 50, noCheese: true}, {name: "火腿", price: 50}, {name: "熱狗(2支)", price: 50}, {name: "香雞", price: 50}, {name: "肉鬆", price: 50}, {name: "蔬菜", price: 50}, {name: "玉米", price: 50}, {name: "素火腿", price: 55}, {name: "漢堡肉", price: 55}, {name: "培根", price: 55}, {name: "薯餅", price: 55}, {name: "燻雞", price: 60}, {name: "里肌豬排", price: 65}, {name: "鮪魚", price: 65}, {name: "蟹肉棒", price: 65}, {name: "鮪魚蟹肉棒", price: 65}, {name: "雞柳", price: 65}, {name: "德式香腸", price: 65}, {name: "厚牛", price: 75}, {name: "鱈魚條", price: 75}, {name: "原味卡拉雞", price: 80}, {name: "辣味卡拉雞", price: 80}, {name: "菲力雞", price: 80}, {name: "香煎雞腿排", price: 90}, {name: "泡菜", price: 55}, {name: "泡菜豬排", price: 80}, {name: "泡菜厚牛", price: 95}, {name: "泡菜燒肉(牛)", price: 95}, {name: "煎餅菓子風風味", price: 80}
+  ]},
+  { id: "drink", title: "飲品", type: "drink", sizes: ["小", "中", "大"], temps: ["冰", "熱"], items: [
+      {name: "紅茶", temps: ["冰", "熱"], prices: [20, 25, 30]}, {name: "綠茶", temps: ["冰", "熱"], prices: [20, 25, 30]}, {name: "豆漿", temps: ["冰", "熱"], prices: [20, 25, 30]}, {name: "無糖豆漿", temps: ["冰", "熱"], prices: [20, 25, 30]}, {name: "奶茶", temps: ["冰", "熱"], prices: [25, 30, 35]}, {name: "紅茶拿鐵", temps: ["冰", "熱"], prices: [30, 40, 50]}, {name: "冰水果茶", temps: ["冰"], prices: [null, null, 55]}, {name: "草莓冰沙", temps: ["冰"], prices: [null, null, 55]}, {name: "草莓牛奶", temps: ["冰"], prices: [55, null, null]}
+  ]},
+  { id: "coffee", title: "咖啡", type: "drink", sizes: ["大"], temps: ["冰", "熱"], items: [
+      {name: "美式", temps: ["冰", "熱"], prices: [null, null, 40]}, {name: "拿鐵", temps: ["冰", "熱"], prices: [null, null, 50]}, {name: "香草拿鐵", temps: ["冰", "熱"], prices: [null, null, 55]}, {name: "焦糖拿鐵", temps: ["冰", "熱"], prices: [null, null, 55]}, {name: "榛果拿鐵", temps: ["冰", "熱"], prices: [null, null, 55]}
+  ]},
+  { id: "snack", title: "點心", type: "flat", items: [
+      {name: "荷包蛋", price: 10}, {name: "小熱狗(4支)", price: 25}, {name: "德式香腸", price: 25}, {name: "里肌豬排", price: 25}, {name: "泡菜", price: 25}, {name: "歐姆蛋", price: 35}, {name: "蘿蔔糕", price: 35}, {name: "酥炸餃", price: 35}, {name: "細薯", price: 35}, {name: "脆薯", price: 35}, {name: "小雞球", price: 35}, {name: "鬆餅(3片)", price: 40}, {name: "雞塊", price: 45}, {name: "香檸雞柳(3條)", price: 45}, {name: "薯餅塔", price: 45}, {name: "地瓜(2顆)", price: 45}, {name: "洋蔥圈(7個)", price: 50}, {name: "地瓜球(10顆)", price: 50}, {name: "厚牛", price: 45}, {name: "鱈魚條", price: 50}, {name: "原味卡拉", price: 50}, {name: "辣味卡拉", price: 50}, {name: "菲力雞", price: 50}, {name: "香煎雞腿排", price: 60}, {name: "杏鮑菇", price: 65}, {name: "唐揚雞", price: 70}, {name: "青花椒唐揚雞", price: 70}
+  ]},
+  { id: "club", title: "總匯", type: "flat", items: [
+      {name: "里肌總匯", price: 80}, {name: "鮪魚總匯", price: 80}, {name: "厚牛起司總匯", price: 95}
+  ]},
+  { id: "salad", title: "沙拉", type: "salad", sauces: ["洋蔥和風", "千島", "蜂蜜芥末", "凱薩", "檸檬"], addons: [{name: "加水煮蛋", price: 10}], items: [
+      {name: "生菜沙拉", price: 55}, {name: "素火腿沙拉", price: 65}, {name: "培根沙拉", price: 65}, {name: "燻雞沙拉", price: 70}, {name: "地瓜沙拉", price: 70}, {name: "蟹肉棒沙拉", price: 70}, {name: "德式香腸沙拉", price: 70}, {name: "菲力雞沙拉", price: 85}, {name: "鮮蝦沙拉", price: 85}, {name: "腿排沙拉", price: 90}
+  ]},
+  { id: "noodle", title: "麵類", type: "noodle", addons: [{name: "加蛋", price: 10}, {name: "加豬排", price: 25}], items: [
+      {name: "炒泡麵(含蛋)", price: 85, noEgg: true}, {name: "素蘑菇", price: 45}, {name: "素黑胡椒", price: 45}, {name: "蘑菇", price: 45}, {name: "黑胡椒", price: 45}, {name: "和風照燒", price: 45}, {name: "三杯雞", price: 55}, {name: "宮保雞丁", price: 60}, {name: "打拋豬", price: 60}
+  ]},
+  { id: "omurice", title: "蛋包飯", type: "omurice", items: [
+      {name: "咖哩厚牛", price: 140}, {name: "咖哩杏鮑菇", price: 145}, {name: "咖哩唐揚雞", price: 145}, {name: "咖哩雞腿排", price: 145}, {name: "咖哩鱈魚條", price: 145}, {name: "香煎雞腿排", price: 140}, {name: "和風燒肉(牛)", price: 145}
+  ]},
+  { id: "pasta", title: "義大利麵", type: "pasta", sauces: ["奶油", "茄汁", "青醬"], items: [
+      {name: "培根", prices: [120, 120, 125]}, {name: "燻雞", prices: [125, 125, 130]}, {name: "德腸", prices: [125, 125, 130]}, {name: "香草豬肉", prices: [135, 135, 140]}, {name: "鮮蝦", prices: [135, 135, 140]}, {name: "菲力雞", prices: [135, 135, 140]}, {name: "鱈魚條", prices: [140, 140, 145]}, {name: "雞腿排", prices: [140, 140, 145]}
+  ]},
+  { id: "platter", title: "組合盤餐", type: "flat", items: [
+      {name: "兒童餐(小熱狗/雞球/蛋/餐包)", price: 75}, {name: "鬆餅餐(鬆餅/培根/起司/蛋)", price: 105}, {name: "歐姆蛋套餐(時蔬/蛋/燻雞/脆薯)", price: 125}, {name: "中式套餐(小熱狗/雞球/蛋/餐包)", price: 130}, {name: "切達起司軟法餐(沙拉/麵包/豬排)", price: 130}, {name: "燻雞起司軟法餐(燻雞焗烤/薯/蛋)", price: 130}, {name: "鮪魚起司軟法餐(鮪魚焗烤/薯/蛋)", price: 130}, {name: "薯餅塔餐(沙拉/薯餅/起司/德腸)", price: 135}, {name: "炸物拼盤(脆薯/洋蔥圈/小熱狗)", price: 135}, {name: "地瓜雞肉餐(沙拉/地瓜/菲力雞/蛋)", price: 145}
   ]}
 ];
 
@@ -427,7 +392,7 @@ function changeQty(cIdx, iIdx, amount) {
 function openOptModal(cIdx, iIdx) {
     // CAPTURE scroll position BEFORE modal/keyboard affects the layout
     modalScrollPos = window.scrollY || window.pageYOffset;
-    
+
     currentOptKey = cIdx + "-" + iIdx;
     currentOptIndex = 0;
     const cat = menuConfig[cIdx];
@@ -460,7 +425,7 @@ function closeOptModal() {
 
 function saveOpt() {
     closeOptModal();
-    renderCart();
+    renderCart(); // Refresh cart UI once after closing modal
 }
 
 function updateOptCalcUI() {
@@ -785,7 +750,7 @@ async function submitOrder() {
     msg += `\n💰 總金額：$${total}`;
 
     try {
-        let currentLiffId = '2009824040-LFxQxY8t';
+        let currentLiffId = '2009555608-DMioljsI';
         try {
             const configReq = await fetch(`${WORKER_BASE}/api/config`);
             if (configReq.ok) {
@@ -825,7 +790,7 @@ function setTodayDate() {
     }
 }
 
-const WORKER_BASE = "https://alinh.thuanmnc.workers.dev";
+const WORKER_BASE = "https://12cuobian.thuanmnc.workers.dev";
 async function loadDynamicMenu() {
     try {
         const res = await fetch(`${WORKER_BASE}/api/menu?_t=${Date.now()}`);
