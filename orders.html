@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>阿玲越南小吃 Dashboard</title>
+  <title>12月早午餐 Dashboard</title>
   <style>
     :root {
       --primary: #00b900;
@@ -488,7 +488,7 @@
     <div
       style="background:#fff; border-radius:24px; padding:40px 32px; width:90%; max-width:340px; text-align:center; box-shadow:0 24px 80px rgba(0,0,0,0.5);">
       <div style="font-size:52px; margin-bottom:12px;">🔐</div>
-      <div style="font-size:22px; font-weight:900; color:#111; margin-bottom:4px;">阿玲越南小吃 後台</div>
+      <div style="font-size:22px; font-weight:900; color:#111; margin-bottom:4px;">12月早午餐 後台</div>
       <div style="font-size:13px; color:#999; margin-bottom:28px;">請輸入密碼以進入</div>
       <input type="password" id="auth-pw-input" placeholder="密碼"
         style="width:100%; padding:14px; border:2px solid #e5e7eb; border-radius:12px; font-size:18px; text-align:center; outline:none; font-family:inherit; box-sizing:border-box; letter-spacing:4px;"
@@ -558,7 +558,7 @@
   <div class="app">
     <div class="topbar">
       <div class="brand">
-        <div class="brand-title">🍱 阿玲越南小吃</div>
+        <div class="brand-title">🥖 12月早午餐</div>
         <div class="brand-sub">Live orders</div>
       </div>
       <div class="tabs">
@@ -818,7 +818,7 @@
   </div>
 
   <script>
-    const WORKER_BASE = "https://alinh.thuanmnc.workers.dev";
+    const WORKER_BASE = "https://12cuobian.thuanmnc.workers.dev";
 
     // ====== AUTH ======
     async function checkAuth() {
@@ -982,7 +982,7 @@
     document.addEventListener("keydown", unlockSound, { once: true });
 
     function escapeHtml(s) {
-      return String(s !== null && s !== undefined ? s : "")
+      return String(s ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -1000,9 +1000,9 @@
     }
 
     function sortByPickupTimeAsc(a, b) {
-      const at = parsePickupTimeMs(a && a.time);
-      const bt = parsePickupTimeMs(b && b.time);
-      if (Number.isNaN(at) || Number.isNaN(bt)) return ((a && a.createdAt) || 0) - ((b && b.createdAt) || 0);
+      const at = parsePickupTimeMs(a?.time);
+      const bt = parsePickupTimeMs(b?.time);
+      if (Number.isNaN(at) || Number.isNaN(bt)) return (a?.createdAt || 0) - (b?.createdAt || 0);
       return at - bt;
     }
 
@@ -1250,12 +1250,12 @@
 
         // Deduplicate
         const uniqueMap = new Map();
-        orders.forEach(o => { if (o && o.key) uniqueMap.set(o.key, o); });
+        orders.forEach(o => { if (o?.key) uniqueMap.set(o.key, o); });
         latestOrders = Array.from(uniqueMap.values());
 
         // New arrivals => sound
         const newArrivals = latestOrders.filter(o => o && o.key && !knownOrderKeys.has(o.key));
-        newArrivals.forEach(o => { if (o && o.key) knownOrderKeys.add(o.key); });
+        newArrivals.forEach(o => { if (o?.key) knownOrderKeys.add(o.key); });
 
         // NEW orders => fullscreen alert
         pendingNewOrders = latestOrders.filter(o => o && o.status === "NEW").slice().sort(sortByPickupTimeAsc);
@@ -1268,7 +1268,7 @@
         renderAll();
       } catch (e) {
         console.error(e);
-        document.getElementById("list-left").innerHTML = `<div style="text-align:center; padding: 22px; color:#d32f2f;">無法載入: ${escapeHtml((e && e.message) || e)}</div>`;
+        document.getElementById("list-left").innerHTML = `<div style="text-align:center; padding: 22px; color:#d32f2f;">無法載入: ${escapeHtml(e?.message || e)}</div>`;
         document.getElementById("list-right").innerHTML = `<div style="text-align:center; padding: 22px; color:#d32f2f;">無法載入</div>`;
         document.getElementById("list-history").innerHTML = `<div style="text-align:center; padding: 22px; color:#d32f2f;">無法載入</div>`;
       }
@@ -1304,7 +1304,7 @@
       const historyOrders = currentOrders
         .filter(o => o && ["PICKED_UP", "REJECTED"].includes(o.status))
         .slice()
-        .sort((a, b) => ((b && b.createdAt) || 0) - ((a && a.createdAt) || 0));
+        .sort((a, b) => (b?.createdAt || 0) - (a?.createdAt || 0));
 
       document.getElementById("count-left").innerText = String(leftOrders.length);
       document.getElementById("count-right").innerText = String(rightOrders.length);
@@ -1415,7 +1415,7 @@
           const mm = String(nowTaiwan.getUTCMonth() + 1).padStart(2, "0");
           const dd = String(nowTaiwan.getUTCDate()).padStart(2, "0");
           d = `${yyyy}-${mm}-${dd}`;
-        } else if (o && o.time && typeof o.time === "string" && o.time.match(/^\d{4}-\d{2}-\d{2}/)) {
+        } else if (o?.time && typeof o.time === "string" && o.time.match(/^\d{4}-\d{2}-\d{2}/)) {
           d = o.time.slice(0, 10);
         }
         if (!map.has(d)) map.set(d, []);
@@ -1540,7 +1540,7 @@
         document.getElementById("rejectModal").style.display === "flex";
 
       if (Date.now() < newAlertSnoozeUntilMs || isReviewing) {
-        const hasBrandNew = pendingNewOrders.some(o => o && o.key && !snoozedNewOrderKeys.has(o.key));
+        const hasBrandNew = pendingNewOrders.some(o => o?.key && !snoozedNewOrderKeys.has(o.key));
         if (!hasBrandNew) {
           alertEl.style.display = "none";
           stopContinuousAlarm();
@@ -1554,7 +1554,7 @@
 
     function dismissNewAlert() {
       newAlertSnoozeUntilMs = Date.now() + 30_000;
-      snoozedNewOrderKeys = new Set(pendingNewOrders.map(o => o && o.key).filter(Boolean));
+      snoozedNewOrderKeys = new Set(pendingNewOrders.map(o => o?.key).filter(Boolean));
       document.getElementById("new-alert").style.display = "none";
       stopContinuousAlarm();
     }
@@ -1672,7 +1672,7 @@
     }
 
     async function reviewAccept(btn) {
-      if (!(reviewingOrder && reviewingOrder.key)) return;
+      if (!reviewingOrder?.key) return;
       await updateStatus(reviewingOrder.key, "ACCEPTED", {}, btn);
       printOrder(reviewingOrder);
       closeModal();
@@ -1681,7 +1681,7 @@
     }
 
     function reviewOpenChange() {
-      if (!(reviewingOrder && reviewingOrder.key)) return;
+      if (!reviewingOrder?.key) return;
       currentOrderKey = reviewingOrder.key;
       closeModal();
       document.getElementById("change-reason").value = "時間需調整";
@@ -1693,7 +1693,7 @@
     }
 
     function reviewOpenReject() {
-      if (!(reviewingOrder && reviewingOrder.key)) return;
+      if (!reviewingOrder?.key) return;
       currentOrderKey = reviewingOrder.key;
       closeModal();
       document.getElementById("reject-reason").selectedIndex = 0;
@@ -1701,14 +1701,14 @@
     }
 
     async function markReadyFromReview(btn) {
-      if (!(reviewingOrder && reviewingOrder.key)) return;
+      if (!reviewingOrder?.key) return;
       await updateStatus(reviewingOrder.key, "DONE", {}, btn);
       closeModal();
       switchTab("live");
     }
 
     async function reviewForceCancel(btn) {
-      if (!(reviewingOrder && reviewingOrder.key)) return;
+      if (!reviewingOrder?.key) return;
       if (!confirm("Hủy đơn hàng này do khách không phản hồi?")) return;
       await updateStatus(reviewingOrder.key, "FORCE_REJECT", {}, btn);
       closeModal();
