@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>阿玲越南小吃</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #f1c40f;
+        --primary-dark: #f39c12;
+        --bg: #fffef2;
+        --card: #ffffff;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --border: #f3f4f6;
+        --red: #ef4444;
+    }
+    
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); margin: 0; padding-bottom: 140px; color: var(--text); }
+    
+    /* Header & Nav */
+    .header-banner { background: var(--primary); color: white; padding: 20px; text-align: center; font-size: 24px; font-weight: 900; letter-spacing: 0.5px; }
+    
+    .sticky-nav { 
+        position: sticky; top: 0; z-index: 100; background: white; 
+        display: flex; overflow-x: auto; scroll-behavior: smooth;
+        border-bottom: 1px solid #ddd; box-shadow: 0 4px 10px rgba(0,0,0,0.03); 
+    }
+    .sticky-nav::-webkit-scrollbar { display: none; }
+    .nav-btn { 
+        padding: 16px 20px; white-space: nowrap; font-weight: 800; 
+        color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; 
+        transition: all 0.2s ease; font-size: 16px; 
+    }
+    .nav-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    
+    /* Sections Container */
+    .container { padding: 16px; max-width: 600px; margin: 0 auto; }
+    
+    .section-container { scroll-margin-top: 70px; margin-bottom: 30px; }
+    .section-title { font-size: 20px; font-weight: 900; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .section-title::before { content: ''; display: inline-block; width: 6px; height: 22px; background: var(--primary); border-radius: 4px; }
+    
+    .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    
+    /* Product Card */
+    .card { background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
+    .card-no-img { padding: 2px; } 
+    
+    .card-body { padding: 16px; display: flex; flex-direction: column; flex-grow: 1; }
+    .card-title { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+    
+    /* Quantity Controls */
+    .qty-control { display: flex; align-items: center; gap: 14px; background: #f3f4f6; border-radius: 99px; padding: 4px; }
+    .btn-qty { 
+        width: 32px; height: 32px; border-radius: 50%; border: none; 
+        background: white; color: var(--text); font-size: 18px; font-weight: 600; 
+        display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    }
+    .qty-text { font-size: 16px; font-weight: 800; min-width: 16px; text-align: center; }
+    
+    .customize-btn { width: 100%; text-align: center; margin-top: 10px; background: #fff4e5; color: #d97706; padding: 10px; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; border: none;}
+    
+    /* Other Forms */
+    .input-group { background: var(--card); padding: 18px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 16px; }
+    .datetime-row { display: flex; gap: 12px; }
+    input, textarea, select { width: 100%; padding: 14px; font-size: 16px; box-sizing: border-box; border: 1.5px solid #e5e7eb; border-radius: 12px; margin-top: 8px; font-family: inherit; font-weight: 600; outline: none; transition: border-color 0.2s; }
+    input:focus, textarea:focus, select:focus { border-color: var(--primary); }
+    
+    /* Footer */
+    .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 16px 24px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); box-shadow: 0 -5px 20px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; z-index: 100;}
+    .total-wrap { display: flex; flex-direction: column; }
+    .total-label { font-size: 13px; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
+    .total-price { font-size: 26px; font-weight: 900; color: var(--text); }
+    .btn-send { background: var(--primary); color: white; border: none; padding: 16px 32px; border-radius: 99px; font-weight: 900; font-size: 18px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 185, 0, 0.4); transition: transform 0.1s; }
+    .btn-send:active { transform: scale(0.96); }
+    .btn-send:disabled { background: #d1d5db; box-shadow: none; cursor: not-allowed; }
+    
+    /* Popups */
+    .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: flex-end; z-index: 999; animation: fade 0.2s; }
+    .popup-box { background: white; padding: 24px; width: 100%; border-radius: 24px 24px 0 0; max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-sizing: border-box;}
+    .popup-header { display: flex; justify-content: space-between; align-items: center; font-size: 20px; font-weight: 900; border-bottom: 2px solid #f3f4f6; padding-bottom: 16px; margin-bottom: 16px; }
+    .close-btn { background: #f3f4f6; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; }
+    
+    .custom-alert-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 10000; }
+    .custom-alert-box { background: white; width: 85%; max-width: 340px; border-radius: 20px; text-align: center; overflow: hidden; animation: alertShow 0.2s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+    .custom-alert-header { padding: 20px; font-weight: 900; font-size: 20px; border-bottom: 1px solid #eee; color: #111; }
+    .custom-alert-body { padding: 24px; font-size: 16px; font-weight: 600; color: #444; line-height: 1.5; }
+    .custom-alert-btn { width: 100%; padding: 18px; border: none; background: #fff; border-top: 1px solid #eee; color: var(--primary); font-weight: 900; font-size: 18px; cursor: pointer; }
+    
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes alertShow { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+</style>
+</head>
+
+<body>
+<div class="header-banner">🍱 阿玲越南小吃</div>
+
+<nav class="sticky-nav" id="main-nav"></nav>
+
+<div class="container" id="main-container"></div>
+
+<div class="container" style="margin-bottom: 80px;">
+    <div class="section-container" id="sec-cart" style="margin-top: 20px;">
+        <div class="section-title">🛒 購物車</div>
+        <div class="input-group" id="cart-list">
+            <div style="color: var(--muted); font-size: 14px; text-align: center;">尚無餐點</div>
+        </div>
+    </div>
+    
+    <div class="section-container" id="sec-checkout">
+        <div class="section-title">🕒 取餐時間</div>
+        <div class="input-group">
+            <label style="font-weight: 800; color: var(--primary);">⚠️ 請選擇取餐日期 / 時間</label>
+            <div class="datetime-row">
+                <input type="date" id="pickup-date">
+                <input type="time" id="pickup-time">
+            </div>
+        </div>
+
+        <div class="section-title">📝 其他要求</div>
+        <div class="input-group">
+            <textarea id="note" rows="3" placeholder="例如：切半、勿加洋蔥等..."></textarea>
+        </div>
+        <a href="https://line.me/ti/p/8k-DsB-f5Y" target="_blank"
+            style="display:block; text-align:center; font-size:11px; color:#c0c4cc; text-decoration:none; padding: 4px 0 0; letter-spacing:0.3px;">
+            Powered by Blab ⓘ
+        </a>
+    </div>
+</div>
+
+<div class="footer">
+    <div class="total-wrap" onclick="scrollToSec('sec-cart')" style="cursor:pointer; position: relative;">
+        <span style="font-size: 32px; line-height:1;">🛒</span>
+        <span id="cart-badge" style="display:none; position:absolute; top:-6px; right:-10px; background:var(--red); color:#fff; font-size:11px; font-weight:900; border-radius:99px; padding: 2px 6px; min-width:18px; text-align:center;">0</span>
+        <span class="total-price" style="font-size:20px;">$<span id="total-price">0</span></span>
+    </div>
+    <button class="btn-send" id="btn-submit" onclick="submitOrder()">確認下單</button>
+</div>
+
+<div id="custom-alert" class="custom-alert-overlay">
+    <div class="custom-alert-box">
+        <div class="custom-alert-header">提醒</div>
+        <div id="custom-alert-message" class="custom-alert-body"></div>
+        <button class="custom-alert-btn" onclick="closeCustomAlert()">確定</button>
+    </div>
+</div>
+
+<!-- UNIVERSAL MODAL FOR CUSTOMIZATION -->
+<div id="optionModal" class="popup-overlay" style="display:none; align-items:flex-end;">
+    <div class="popup-box" style="max-height: 85vh; display: flex; flex-direction: column;">
+        <div class="popup-header">
+            <span id="opt-title" style="flex: 1; word-break: break-all; margin-right: 12px; font-size: 18px;">-</span>
+            <div class="close-btn" onclick="closeOptModal()">✕</div>
+        </div>
+        <div id="opt-body" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 20px; flex: 1;"></div>
+        
+        <div style="display:flex; justify-content: flex-end; align-items:center; margin-top: 10px; border-top: 1px solid #eee; padding-top: 16px;">
+            <button class="btn-send" id="btn-add-cart" style="padding: 12px 24px; width: 100%;" onclick="saveOpt()">確認 / 保存 $<span id="opt-price-btn">0</span></button>
+        </div>
+    </div>
+</div>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+// --- CORE DATA CONFIG ---
+let menuConfig = [
+  { id: "soup1", title: "清湯牛骨湯類 (Nước súp bò)", type: "flat", items: [
+      {name: "牛肉河粉 (Phở bò tái)", price: 120},
+      {name: "牛肉米粉 (Bún bò tái)", price: 120},
+      {name: "海鮮河粉 (Phở Hải Sản)", price: 120},
+      {name: "海鮮米粉 (Bún Hải Sản)", price: 120},
+      {name: "牛肉湯 (Canh Thịt Bò)", price: 100},
+      {name: "海鮮湯 (Canh Hải Sản)", price: 100},
+      {name: "河粉湯 (Phở Nước)", price: 80},
+      {name: "米粉湯 (Bún Nước)", price: 80}
+  ]},
+  { id: "soup2", title: "泰式酸辣豬骨湯 (Nước Súp Chua Cay Thái)", type: "flat", items: [
+      {name: "牛肉河粉 (Phở bò tái)", price: 120},
+      {name: "牛肉米粉 (Bún bò tái)", price: 120},
+      {name: "海鮮河粉 (Phở Hải Sản)", price: 120},
+      {name: "海鮮米粉 (Bún Hải Sản)", price: 120},
+      {name: "牛肉湯 (Canh Thịt Bò)", price: 100},
+      {name: "海鮮湯 (Canh Hải Sản)", price: 100},
+      {name: "河粉湯 (Phở Nước)", price: 80},
+      {name: "米粉湯 (Bún Nước)", price: 80}
+  ]},
+  { id: "soup3", title: "番茄豬骨湯 (Nước Súp Riêu Cua)", type: "flat", items: [
+      {name: "蟹醬米粉 (Bún Riêu Cua)", price: 120},
+      {name: "蟹醬河粉 (Phở Riêu Cua)", price: 120},
+      {name: "牛肉河粉 (Phở bò tái)", price: 120},
+      {name: "牛肉米粉 (Bún Bò Tái)", price: 120},
+      {name: "海鮮河粉 (Phở Hải Sản)", price: 120},
+      {name: "海鮮米粉 (Bún Hải Sản)", price: 120},
+      {name: "牛肉湯 (Canh Thịt Bò)", price: 100},
+      {name: "海鮮湯 (Canh Hải Sản)", price: 100},
+      {name: "河粉湯 (Phở Nước)", price: 80},
+      {name: "米粉湯 (Bún Nước)", price: 80}
+  ]},
+  { id: "soup4", title: "順化, 香茅牛骨湯 (Nước Súp bò Huế)", type: "flat", items: [
+      {name: "牛腱大米粉 (Bún bò Huế)", price: 120},
+      {name: "牛腱河粉 (Phở bò Huế)", price: 120},
+      {name: "牛腱米粉 (Bún bò Huế (+Nho))", price: 120},
+      {name: "牛肉河粉 (Phở Bò Tái)", price: 120},
+      {name: "牛肉米粉 (Bún Bò Tái)", price: 120},
+      {name: "海鮮河粉 (Phở Hải Sản)", price: 120},
+      {name: "海鮮米粉 (Bún Hải Sản)", price: 120},
+      {name: "牛肉湯 (Canh Thịt Bò)", price: 100},
+      {name: "海鮮湯 (Canh Hải Sản)", price: 100},
+      {name: "河粉/米粉湯 (Phở/Bún Nước)", price: 80}
+  ]},
+  { id: "soup5", title: "紅燒牛肉湯 (Bò Kho)", type: "flat", items: [
+      {name: "牛肉河粉 (Phở Bò Kho)", price: 130},
+      {name: "牛肉米粉 (Bún Bò Kho)", price: 130},
+      {name: "牛肉麵包1條 (Bò Kho Bánh Mì 1 ổ)", price: 130},
+      {name: "牛肉麵包2條 (Bò Kho Bánh Mì 2 ổ)", price: 160},
+      {name: "牛肉湯 (Canh Thịt Bò)", price: 110},
+      {name: "海鮮湯 (Canh Hải Sản)", price: 100},
+      {name: "河粉湯 (Phở Nước)", price: 100},
+      {name: "米粉湯 (Bún Nước)", price: 80}
+  ]},
+  { id: "banhmi", title: "麵包類 (Bánh mì) & Cà phê", type: "flat", items: [
+      {name: "咖啡 (Càfê)", price: 60},
+      {name: "空麵包 (Bánh mì không)", price: 30},
+      {name: "菜麵包 (Bánh mì rau)", price: 60},
+      {name: "菜蛋麵包 (Bánh mì rau trứng)", price: 70},
+      {name: "豬肉火腿麵包 (Bánh Mì thịt heo)", price: 80},
+      {name: "雞肉火腿麵包 (Bánh Mì thịt gà)", price: 80},
+      {name: "火腿麵包 (Bánh mì Chả Lụa)", price: 80},
+      {name: "豬肉蛋麵包 (Bánh Mì Thịt Heo Trứng)", price: 90},
+      {name: "雞肉蛋麵包 (Bánh Mì Thịt Gà Trứng)", price: 90},
+      {name: "火腿蛋麵包 (Bánh Mì Chả Lụa Trứng)", price: 90},
+      {name: "綜合麵包 (Bánh mì thập cẩm)", price: 100},
+      {name: "牛肉火腿麵包 (Bánh mì thịt bò)", price: 100},
+      {name: "牛肉蛋麵包 (Bánh mì thịt bò thêm Trứng)", price: 100},
+      {name: "綜合牛 (Thập Cẩm Bò)", price: 110},
+      {name: "豬排火腿 / 豬排蛋麵包", price: 100}
+  ]},
+  { id: "dry", title: "涼拌粉類 (Gỏi Bún, Phở)", type: "flat", items: [
+      {name: "鮮蝦春捲 (Gỏi Cuốn - 3 cuốn)", price: 80},
+      {name: "鮮蝦春捲 (Gỏi Cuốn - 4 cuốn)", price: 100},
+      {name: "豬排拌米粉 (Bún thịt nướng)", price: 110},
+      {name: "豬排拌河粉 (Phở thịt nướng)", price: 110},
+      {name: "鮮蝦涼拌米粉 (Bún Trộn Tôm)", price: 110},
+      {name: "鮮蝦涼拌河粉 (Phở Trộn Tôm)", price: 110},
+      {name: "牛肉拌河粉 (Phở Bò Xào)", price: 110},
+      {name: "牛肉拌米粉 (Bún Bò Xào)", price: 110},
+      {name: "XO醬海鮮炒飯 (Cơm Rang Hải Sản)", price: 120},
+      {name: "XO醬牛肉炒飯 (Cơm Rang Thịt Bò)", price: 120},
+      {name: "綜合炒飯海鮮牛肉 (Cơm Rang Thập Cẩm)", price: 150}
+  ]},
+  { id: "addon", title: "加料 (Thêm thịt)", type: "flat", items: [
+      {name: "加料: 海鮮 (Hải Sản) / 牛肉 (Thịt Bò)", price: 50},
+      {name: "加料: 蟹肉 (Riêu Cua) / 豬腳 (Giò heo)", price: 50},
+      {name: "加料: 雞蛋 (trứng gà)", price: 15},
+      {name: "加料: 粉 (bún) / 菜 (rau) / 豆芽 (giá)", price: 10}
+  ]}
+];
+
+let cart = {};
+let currentOptKey = null;
+let currentOptIndex = 0;
+let modalScrollPos = 0; // New global to track position before modal/keyboard opens
+
+function scrollToSec(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+const observerOptions = { root: null, rootMargin: '-80px 0px -70% 0px', threshold: 0 };
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            const targetBtn = document.querySelector(`.nav-btn[onclick="scrollToSec('${entry.target.id}')"]`);
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+                const nav = document.getElementById('main-nav');
+                nav.scrollTo({ left: targetBtn.offsetLeft - 20, behavior: 'smooth' });
+            }
+        }
+    });
+}, observerOptions);
+
+function customAlert(msg, callback = null) {
+    document.getElementById('custom-alert-message').innerText = msg;
+    document.getElementById('custom-alert').style.display = 'flex';
+    window.alertCallback = callback;
+}
+function closeCustomAlert() {
+    document.getElementById('custom-alert').style.display = 'none';
+    if (window.alertCallback) { window.alertCallback(); window.alertCallback = null; }
+}
+
+function initMenu() {
+    const nav = document.getElementById('main-nav');
+    const container = document.getElementById('main-container');
+    nav.innerHTML = '';
+    container.innerHTML = '';
+
+    menuConfig.forEach((cat, cIdx) => {
+        const tab = document.createElement('div');
+        tab.className = 'nav-btn';
+        tab.innerText = cat.title; 
+        if(cIdx===0) tab.classList.add('active');
+        tab.onclick = () => scrollToSec('sec-' + cat.id);
+        nav.appendChild(tab);
+
+        const sec = document.createElement('div');
+        sec.className = 'section-container';
+        sec.id = 'sec-' + cat.id;
+
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'section-title';
+        titleDiv.innerText = cat.title;
+        sec.appendChild(titleDiv);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+
+        cat.items.forEach((item, iIdx) => {
+            const div = document.createElement('div');
+            div.className = 'card card-no-img';
+            
+            let priceText = "";
+            let pArray = item.prices || [item.price];
+            let validPrices = pArray.filter(p => p !== null && p !== undefined);
+            if (validPrices.length > 0) {
+                let min = Math.min(...validPrices);
+                let max = Math.max(...validPrices);
+                priceText = min === max ? `$${min}` : `$${min} - $${max}`;
+            }
+
+            div.innerHTML = `
+                <div class="card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                          <div class="card-title">${item.name}</div>
+                          <div class="card-price" style="color: var(--primary); font-size: 16px; font-weight: 800;">${priceText}</div>
+                      </div>
+                      <div class="qty-control">
+                          <button class="btn-qty" onclick="changeQty(${cIdx}, ${iIdx}, -1)">-</button>
+                          <span class="qty-text" id="qty-${cIdx}-${iIdx}">0</span>
+                          <button class="btn-qty" onclick="changeQty(${cIdx}, ${iIdx}, 1)">+</button>
+                      </div>
+                    </div>
+                    <button class="customize-btn" id="cust-btn-${cIdx}-${iIdx}" onclick="openOptModal(${cIdx}, ${iIdx})">客製化 (加料 / 備註)</button>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+
+        sec.appendChild(grid);
+        container.appendChild(sec);
+        observer.observe(sec);
+    });
+}
+
+function getDefaultConfig(cat, item) {
+    let conf = {};
+    if (cat.sizes) {
+        let firstAvail = cat.sizes.findIndex((s, idx) => item.prices[idx] !== null);
+        if (firstAvail > -1) conf.size = cat.sizes[firstAvail];
+    }
+    if (cat.temps) conf.temp = item.temps[0];
+    if (cat.sauces) conf.sauce = cat.sauces[0];
+    return conf;
+}
+
+function calculateUnitPrice(cat, item, config) {
+    let unit = 0;
+    if (item.price) unit = item.price;
+    else if (item.prices) {
+        if (cat.sizes && config.size) {
+            let idx = cat.sizes.indexOf(config.size);
+            unit = item.prices[idx] || 0;
+        } else if (cat.sauces && cat.type === 'pasta' && config.sauce) { 
+            let idx = cat.sauces.indexOf(config.sauce);
+            unit = item.prices[idx] || 0;
+        } else {
+            let valids = item.prices.filter(p=>p!==null);
+            unit = valids.length > 0 ? Math.min(...valids) : 0;
+        }
+    }
+    if (cat.addons) {
+        cat.addons.forEach(a => {
+            if (config[a.name]) unit += a.price;
+        });
+    }
+    return unit;
+}
+
+function changeQty(cIdx, iIdx, amount) {
+    let key = cIdx + "-" + iIdx;
+    const cat = menuConfig[cIdx];
+    const item = cat.items[iIdx];
+
+    if (!cart[key]) cart[key] = [];
+    
+    if (amount > 0) {
+        let newConf = cart[key].length > 0 ? JSON.parse(JSON.stringify(cart[key][cart[key].length-1].config)) : getDefaultConfig(cat, item);
+        cart[key].push({
+            cIdx: cIdx,
+            iIdx: iIdx,
+            config: newConf,
+            price: calculateUnitPrice(cat, item, newConf)
+        });
+    } else if (amount < 0 && cart[key].length > 0) {
+        cart[key].pop();
+    }
+    
+    let qty = cart[key].length;
+    
+    if (qty === 0) {
+        delete cart[key];
+        document.getElementById("qty-" + key).innerText = "0";
+        document.getElementById("cust-btn-" + key).style.display = "none";
+    } else {
+        document.getElementById("qty-" + key).innerText = qty;
+        document.getElementById("cust-btn-" + key).style.display = "block";
+    }
+    renderCart();
+}
+
+function openOptModal(cIdx, iIdx) {
+    // CAPTURE scroll position BEFORE modal/keyboard affects the layout
+    modalScrollPos = window.scrollY || window.pageYOffset;
+    
+    currentOptKey = cIdx + "-" + iIdx;
+    currentOptIndex = 0;
+    const cat = menuConfig[cIdx];
+    const item = cat.items[iIdx];
+    const list = cart[currentOptKey];
+    
+    document.getElementById('opt-title').innerText = item.name + " (客製化)";
+    renderOptBody(cat, item, list[currentOptIndex].config, list.length, currentOptIndex);
+    updateOptCalcUI();
+    
+    document.getElementById('optionModal').style.display = 'flex';
+}
+
+function switchOptIndex(idx) {
+    currentOptIndex = idx;
+    const list = cart[currentOptKey];
+    const cat = menuConfig[list[currentOptIndex].cIdx];
+    const item = cat.items[list[currentOptIndex].iIdx];
+    renderOptBody(cat, item, list[currentOptIndex].config, list.length, currentOptIndex);
+}
+
+function closeOptModal() {
+    document.getElementById('optionModal').style.display = 'none';
+    // Restore original position when closing (even if just clicking X)
+    // Delay slightly to let keyboard retract on mobile
+    setTimeout(function() {
+        window.scrollTo(0, modalScrollPos);
+    }, 50);
+}
+
+function saveOpt() {
+    closeOptModal();
+    renderCart();
+}
+
+function updateOptCalcUI() {
+    const list = cart[currentOptKey];
+    let total = list.reduce((sum, item) => sum + item.price, 0);
+    document.getElementById('opt-price-btn').innerText = total;
+}
+
+function renderOptBody(cat, item, config, listLength = 1, currentIndex = 0) {
+    const body = document.getElementById('opt-body');
+    let html = '';
+
+    if (listLength > 1) {
+        html += `<div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; margin-bottom:16px; border-bottom:1px solid #eee;">`;
+        for(let i=0; i<listLength; i++) {
+            let active = i === currentIndex ? `background:var(--primary);color:#fff;border-color:var(--primary);` : `background:#fff;color:#666;border-color:#ddd;`;
+            html += `<button style="padding: 8px 16px; border-radius:8px; border:1px solid; font-weight:800; cursor:pointer; flex: 0 0 auto; ${active}" onclick="switchOptIndex(${i})">第 ${i+1} 份</button>`;
+        }
+        html += `</div>`;
+    }
+
+    const labelStyle = `font-size: 14px; font-weight:800; color:var(--muted); display:block; margin: 16px 0 8px 0;`;
+
+    if (cat.sizes) {
+        html += `<label style="${labelStyle}">選擇大小</label>`;
+        html += `<div style="display:flex; flex-wrap:wrap; gap:8px;">`;
+        cat.sizes.forEach((s, i) => {
+            let p = item.prices[i];
+            if (p !== null && p !== undefined) {
+                let sel = config.size === s ? `background:var(--primary); color:#fff; border-color:var(--primary);` : `background:#fff; color:#111; border-color:#ccc;`;
+                html += `<button style="padding: 10px 14px; border-radius: 8px; border: 1px solid; font-weight:700; ${sel}" onclick="setOpt('size', '${s}')">${s} ($${p})</button>`;
+            }
+        });
+        html += `</div>`;
+    }
+
+    if (cat.temps) {
+        html += `<label style="${labelStyle}">冷熱</label>`;
+        html += `<div style="display:flex; flex-wrap:wrap; gap:8px;">`;
+        item.temps.forEach((t) => {
+            let sel = config.temp === t ? `background:var(--primary); color:#fff; border-color:var(--primary);` : `background:#fff; color:#111; border-color:#ccc;`;
+            html += `<button style="padding: 10px 14px; border-radius: 8px; border: 1px solid; font-weight:700; ${sel}" onclick="setOpt('temp', '${t}')">${t}</button>`;
+        });
+        html += `</div>`;
+    }
+
+    if (cat.sauces && cat.type === 'pasta') {
+        html += `<label style="${labelStyle}">選擇醬汁</label>`;
+        html += `<div style="display:flex; flex-wrap:wrap; gap:8px;">`;
+        cat.sauces.forEach((s, i) => {
+            let p = item.prices[i];
+            let sel = config.sauce === s ? `background:var(--primary); color:#fff; border-color:var(--primary);` : `background:#fff; color:#111; border-color:#ccc;`;
+            html += `<button style="padding: 10px 14px; border-radius: 8px; border: 1px solid; font-weight:700; ${sel}" onclick="setOpt('sauce', '${s}')">${s} ($${p})</button>`;
+        });
+        html += `</div>`;
+    } else if (cat.sauces && cat.type === 'salad') {
+        html += `<label style="${labelStyle}">選擇醬汁</label>`;
+        html += `<select style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; font-weight:700; outline:none;" onchange="setOpt('sauce', this.value)">`;
+        cat.sauces.forEach(s => {
+            let sel = config.sauce === s ? 'selected' : '';
+            html += `<option value="${s}" ${sel}>${s}</option>`;
+        });
+        html += `</select>`;
+    }
+
+    if (cat.addons) {
+        html += `<label style="${labelStyle}">加料</label>`;
+        html += `<div style="display:flex; flex-direction:column; gap:10px;">`;
+        cat.addons.forEach(a => {
+            if (a.name === '加蛋' && item.noEgg) return;
+            if (a.name === '加起司' && item.noCheese) return;
+            
+            let checked = config[a.name] ? 'checked' : '';
+            html += `<label style="display:flex; align-items:center; gap:10px; font-weight:700; cursor:pointer;">
+                <input type="checkbox" style="width:20px; height:20px;" ${checked} onchange="setOpt('${a.name}', this.checked)">
+                ${a.name} (+${a.price}元)
+            </label>`;
+        });
+        html += `</div>`;
+    }
+
+    if (cat.type === 'pasta') {
+        html += `<label style="${labelStyle}">更換</label>`;
+        let checked = config['swap'] === '燉飯' ? 'checked' : '';
+        html += `<label style="display:flex; align-items:center; gap:10px; font-weight:700; cursor:pointer;">
+            <input type="checkbox" style="width:20px; height:20px;" ${checked} onchange="setOpt('swap', this.checked ? '燉飯' : null)">
+            更換燉飯
+        </label>`;
+    }
+    if (cat.type === 'omurice') {
+        html += `<label style="${labelStyle}">更換</label>`;
+        let checked = config['swap'] === '更換荷包蛋' ? 'checked' : '';
+        html += `<label style="display:flex; align-items:center; gap:10px; font-weight:700; cursor:pointer;">
+            <input type="checkbox" style="width:20px; height:20px;" ${checked} onchange="setOpt('swap', this.checked ? '更換荷包蛋' : null)">
+            更換荷包蛋
+        </label>`;
+    }
+
+    html += `<label style="${labelStyle}">備註</label>`;
+    let nval = config.note || '';
+    html += `<input type="text" value="${nval}" placeholder="例如：不辣、不要香菜" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; font-family:inherit; font-weight:700; outline:none;" onkeyup="setNoteOpt(this.value)" onchange="setNoteOpt(this.value)">`;
+
+    body.innerHTML = html;
+}
+
+function setOpt(key, val) {
+    const list = cart[currentOptKey];
+    const cItem = list[currentOptIndex];
+    const cat = menuConfig[cItem.cIdx];
+    const item = cat.items[cItem.iIdx];
+    
+    cItem.config[key] = val;
+    cItem.price = calculateUnitPrice(cat, item, cItem.config);
+    
+    renderOptBody(cat, item, cItem.config, list.length, currentOptIndex);
+    updateOptCalcUI();
+    renderCart(); 
+}
+
+function setNoteOpt(val) {
+    const list = cart[currentOptKey];
+    const cItem = list[currentOptIndex];
+    cItem.config['note'] = val;
+    // Removed renderCart() from here to prevent page jump while typing.
+    // The cart will be updated when you click "Confirm" (saveOpt).
+}
+
+function removeCart(key) {
+    delete cart[key];
+    document.getElementById("qty-" + key).innerText = "0";
+    document.getElementById("cust-btn-" + key).style.display = "none";
+    renderCart();
+}
+
+function formatItemName(cartItem) {
+    const cat = menuConfig[cartItem.cIdx];
+    const item = cat.items[cartItem.iIdx];
+    const c = cartItem.config;
+    
+    let parts = [item.name];
+    if (cat.type === 'bread') parts.push('(' + cat.breadName + ')');
+    if (c.size) parts.push(c.size);
+    if (c.temp) parts.push(c.temp);
+    if (cat.type === 'pasta' && c.sauce) parts.push(c.sauce);
+    if (cat.type === 'salad' && c.sauce) parts.push(c.sauce);
+    
+    let mainName = parts.join(' ');
+    
+    let sub = [];
+    if (cat.addons) {
+        cat.addons.forEach(a => {
+            if (c[a.name]) sub.push(a.name);
+        });
+    }
+    if (c.swap) sub.push(c.swap);
+    if (c.note) sub.push('備註: ' + c.note);
+
+    return { mainName, sub: sub.join(', ') };
+}
+
+function renderCart() {
+    const list = document.getElementById('cart-list');
+    let cartKeys = Object.keys(cart);
+    
+    if (cartKeys.length === 0) {
+        list.innerHTML = `<div style="color: var(--muted); font-size: 14px; text-align: center;">尚無餐點</div>`;
+        document.getElementById('total-price').innerText = 0;
+        return;
+    }
+
+    let html = '';
+    let total = 0;
+
+    let flattened = [];
+    cartKeys.forEach(k => {
+        cart[k].forEach(instance => {
+            const texts = formatItemName(instance);
+            const signature = k + '||' + texts.mainName + '||' + texts.sub;
+            let existing = flattened.find(f => f.signature === signature);
+            if (existing) {
+                existing.qty++;
+                existing.totalPrice += instance.price;
+            } else {
+                flattened.push({ signature, k, texts, qty: 1, totalPrice: instance.price });
+            }
+        });
+    });
+
+    flattened.forEach(f => {
+        html += `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid #f3f4f6;">
+            <div style="flex:1;">
+                <div style="font-weight:800; font-size:16px;">
+                    <span style="color:var(--primary); margin-right: 2px;">${f.qty}份 x</span>
+                    ${f.texts.mainName} 
+                </div>
+                ${f.texts.sub ? `<div style="font-size:13px; color:var(--muted); margin-top:4px;">${f.texts.sub}</div>` : ''}
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="font-weight:900; font-size:16px; color: var(--primary);">$${f.totalPrice}</div>
+                <div style="background:#f3f4f6; color:#999; padding:6px 10px; border-radius:8px; font-weight:800; cursor:pointer;" onclick="removeCart('${f.k}')">✕</div>
+            </div>
+        </div>`;
+        total += f.totalPrice;
+    });
+
+    list.innerHTML = html;
+    document.getElementById('total-price').innerText = total;
+
+    // Update cart badge
+    const totalQty = Object.values(cart).reduce((sum, arr) => sum + arr.length, 0);
+    const badge = document.getElementById('cart-badge');
+    if (badge) {
+        if (totalQty > 0) {
+            badge.innerText = totalQty;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+}
+
+let isSubmitting = false;
+
+function generateOrderNumber() {
+    const now = new Date();
+    const twTime = new Date(now.getTime() + 8 * 3600000);
+    const month = String(twTime.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(twTime.getUTCDate()).padStart(2, '0');
+    const hours = String(twTime.getUTCHours()).padStart(2, '0');
+    const mins = String(twTime.getUTCMinutes()).padStart(2, '0');
+    const randomSeq = Math.floor(1000 + Math.random() * 9000);
+    return `B${month}${day}-${hours}${mins}-${randomSeq}`;
+}
+
+async function submitOrder() {
+    if (isSubmitting) return;
+
+    let cartKeys = Object.keys(cart);
+    if (cartKeys.length === 0) return customAlert('請加入餐點');
+    
+    const dateInput = document.getElementById('pickup-date').value;
+    const timeInput = document.getElementById('pickup-time').value;
+
+    if (!dateInput || !timeInput) {
+        // Scroll to and highlight the time section so customer knows what to do
+        const timeSection = document.getElementById('sec-checkout');
+        if (timeSection) {
+            timeSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            timeSection.style.transition = 'outline 0.1s';
+            timeSection.style.outline = '3px solid var(--primary)';
+            timeSection.style.borderRadius = '16px';
+            setTimeout(() => { timeSection.style.outline = 'none'; }, 2000);
+        }
+        // Also focus the appropriate input
+        setTimeout(() => {
+            if (!dateInput) document.getElementById('pickup-date').focus();
+            else document.getElementById('pickup-time').focus();
+        }, 400);
+        return customAlert('請先選取取餐日期和時間 ↓');
+    }
+
+    const now = new Date();
+    const selectedDateTime = new Date(`${dateInput}T${timeInput}`);
+    if (selectedDateTime < now) {
+        return customAlert('不能選擇過去的時間，請重新選擇');
+    }
+
+    const pickupDate = new Date(dateInput);
+    const dayOfWeek = pickupDate.getDay(); 
+    
+    const [hours, minutes] = timeInput.split(':').map(Number);
+    const timeValue = hours + minutes / 60;
+
+    if (dayOfWeek === 2) {
+        return customAlert('每週二公休，請重新選擇取餐日期');
+    } else if (dayOfWeek === 0 || dayOfWeek === 6) {
+        if (timeValue < 6 || timeValue > 15) {
+            return customAlert('週末營業時間為 06:00 - 15:00');
+        }
+    } else {
+        const isValidTime = (timeValue >= 6 && timeValue <= 15) || (timeValue >= 17 && timeValue <= 19.5);
+        if (!isValidTime) {
+            return customAlert('平日營業時間為 06:00-15:00 及 17:00-19:30');
+        }
+    }
+
+    isSubmitting = true;
+    const submitBtn = document.getElementById('btn-submit');
+    submitBtn.disabled = true;
+    submitBtn.innerText = "處理中...";
+
+    const orderNum = generateOrderNumber();
+    let msg = `訂單編號：${orderNum}\n📦 訂單內容：\n`;
+    
+    let flattened = [];
+    cartKeys.forEach(k => {
+        cart[k].forEach(instance => {
+            const texts = formatItemName(instance);
+            const signature = k + '||' + texts.mainName + '||' + texts.sub;
+            let existing = flattened.find(f => f.signature === signature);
+            if (existing) {
+                existing.qty++;
+                existing.totalPrice += instance.price;
+            } else {
+                flattened.push({ signature, texts, qty: 1, totalPrice: instance.price });
+            }
+        });
+    });
+
+    let total = 0;
+    flattened.forEach((f, i) => {
+        msg += `\n${i+1}. ${f.qty}份 x ${f.texts.mainName}`;
+        if (f.texts.sub) msg += `\n   ↳ ${f.texts.sub}`;
+        total += f.totalPrice;
+    });
+
+    msg += `\n\n🕒 取餐時間：${dateInput} ${timeInput}`;
+    const mainNote = document.getElementById('note').value;
+    if (mainNote) msg += `\n📝 總備註：${mainNote}`;
+    
+    msg += `\n💰 總金額：$${total}`;
+
+    try {
+        let currentLiffId = '2009824040-LFxQxY8t';
+        try {
+            const configReq = await fetch(`${WORKER_BASE}/api/config`);
+            if (configReq.ok) {
+                const configData = await configReq.json();
+                if (configData.liffId) currentLiffId = configData.liffId;
+            }
+        } catch(e) {}
+
+        await liff.init({ liffId: currentLiffId });
+        if (liff.isLoggedIn()) {
+            await liff.sendMessages([{ type: 'text', text: msg }]);
+            customAlert('訂單已送出', () => {
+                liff.closeWindow();
+            });
+        } else {
+             // For testing
+             console.log(msg);
+             customAlert('測試模式：訂單已在Console出');
+        }
+    } catch (err) {
+        console.log("LINE LIFF MSG DUMP:\n", msg);
+        customAlert('傳送失敗，請重試 / Lỗi gửi');
+        isSubmitting = false;
+        submitBtn.disabled = false;
+        submitBtn.innerText = "確認下單";
+    }
+}
+
+function setTodayDate() {
+    const today = new Date();
+    const offsetDate = new Date(today.getTime() + 8 * 3600000);
+    const dateStr = offsetDate.toISOString().split('T')[0];
+    const dateEl = document.getElementById('pickup-date');
+    if(dateEl) {
+        dateEl.value = dateStr;
+        dateEl.min = dateStr;
+    }
+}
+
+const WORKER_BASE = "https://alinh.thuanmnc.workers.dev";
+async function loadDynamicMenu() {
+    try {
+        const res = await fetch(`${WORKER_BASE}/api/menu?_t=${Date.now()}`);
+        if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data.length > 0) {
+                menuConfig = data;
+            }
+        }
+    } catch(e) {
+        console.warn("Failed to load dynamic menu, using fallback.");
+    }
+    initMenu();
+    setTodayDate();
+}
+loadDynamicMenu();
+
+</script>
+</body>
+</html>

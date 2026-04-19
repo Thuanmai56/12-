@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>阿玲越南小吃 Dashboard</title>
+  <style>
+    :root {
+      --primary: #00b900;
+      --brand-yellow: #ffcc00;
+      --brand-red: #d32f2f;
+      --bg: #f0f2f5;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, sans-serif;
+      background: var(--bg);
+    }
+
+    .app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--card);
+      border-bottom: 1px solid #eee;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .brand-title {
+      font-weight: 1000;
+      font-size: 22px;
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .tab {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight: 1000;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .tab.active {
+      border-color: var(--primary);
+      color: var(--primary);
+      border-width: 2px;
+    }
+
+    .mini-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #111827;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 1000;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .status-pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      font-size: 15px;
+      color: #111827;
+      white-space: nowrap;
+      font-weight: 900;
+    }
+
+    .content {
+      flex: 1;
+      min-height: 0;
+      padding: 14px 16px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      height: 100%;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid #eee;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-title {
+      font-weight: 1100;
+      font-size: 20px;
+    }
+
+    .panel-sub {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 900;
+      margin-top: 4px;
+    }
+
+    .panel-body {
+      padding: 12px;
+      overflow: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 1100;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .badge.new {
+      background: rgba(211, 47, 47, 0.12);
+      color: var(--brand-red);
+    }
+
+    .badge.wait {
+      background: rgba(255, 204, 0, 0.18);
+      color: #7a5a00;
+    }
+
+    .badge.done {
+      background: rgba(0, 185, 0, 0.12);
+      color: var(--primary);
+    }
+
+    .tile {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      cursor: pointer;
+      background: #fff;
+    }
+
+    .tile.new {
+      border-color: rgba(211, 47, 47, 0.35);
+      box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.08) inset;
+    }
+
+    .tile-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 12px;
+      align-items: baseline;
+    }
+
+    .tile-customer {
+      font-weight: 1100;
+      font-size: 18px;
+    }
+
+    .tile-meta {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .tile-items {
+      margin-top: 8px;
+      color: #111827;
+      font-size: 16px;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      white-space: pre-line;
+    }
+
+    .tile-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      justify-content: center;
+      min-width: 180px;
+    }
+
+    .btn {
+      border: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-weight: 1100;
+      font-size: 18px;
+      cursor: pointer;
+      transition: transform 0.05s ease, opacity 0.2s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.99);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-yellow {
+      background: var(--brand-yellow);
+      color: #1f2937;
+    }
+
+    .btn-danger {
+      background: var(--brand-red);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    /* Fullscreen new order alert */
+    .new-alert {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(211, 47, 47, 0.97), rgba(255, 204, 0, 0.92));
+      padding: 20px;
+      text-align: center;
+    }
+
+    .new-alert-box {
+      width: min(680px, 96vw);
+      background: rgba(255, 255, 255, 0.92);
+      border: 2px solid rgba(255, 255, 255, 0.55);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .new-alert-title {
+      font-size: 34px;
+      font-weight: 1200;
+      margin: 0;
+      color: #111827;
+    }
+
+    .new-alert-sub {
+      margin-top: 10px;
+      color: #111827;
+      font-weight: 1000;
+      font-size: 14px;
+      opacity: 0.75;
+    }
+
+    .new-alert-actions {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 2100;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 20px;
+      width: min(860px, 96vw);
+      max-height: 88vh;
+      overflow: auto;
+      padding: 24px;
+    }
+
+    .modal-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-title h3 {
+      margin: 0;
+      font-weight: 1100;
+      font-size: 28px;
+    }
+
+    .modal-close {
+      cursor: pointer;
+      font-weight: 1200;
+      font-size: 26px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: #f3f4f6;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .detail-box {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      background: #fff;
+    }
+
+    .detail-label {
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 1100;
+    }
+
+    .detail-value {
+      margin-top: 10px;
+      font-size: 24px;
+      font-weight: 1100;
+      color: #111827;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-weight: 1000;
+      font-size: 26px;
+    }
+
+    .detail-content {
+      margin-top: 18px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      background: #fff;
+      white-space: pre-line;
+      line-height: 1.6;
+      font-size: 22px;
+    }
+
+    .detail-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .detail-line {
+      padding: 16px 16px;
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: 14px;
+      background: #fff;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      font-size: 24px;
+    }
+
+    .detail-line.primary {
+      border-color: rgba(0, 185, 0, 0.25);
+      background: rgba(0, 185, 0, 0.05);
+      font-weight: 1100;
+    }
+
+    .detail-line.sub {
+      border-color: rgba(211, 47, 47, 0.18);
+      background: rgba(211, 47, 47, 0.03);
+      padding-left: 14px;
+    }
+
+    .modal-actions {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .modal-actions.two {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      cursor: pointer;
+      color: #111827;
+      font-weight: 1000;
+    }
+
+    .checkbox-label input {
+      width: 32px;
+      height: 32px;
+      margin: 0;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    @media (max-width: 960px) {
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .tile-actions {
+        min-width: 140px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ====== LOGIN OVERLAY ====== -->
+  <div id="auth-overlay"
+    style="display:none; position:fixed; inset:0; background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); z-index:99999; align-items:center; justify-content:center;">
+    <div
+      style="background:#fff; border-radius:24px; padding:40px 32px; width:90%; max-width:340px; text-align:center; box-shadow:0 24px 80px rgba(0,0,0,0.5);">
+      <div style="font-size:52px; margin-bottom:12px;">🔐</div>
+      <div style="font-size:22px; font-weight:900; color:#111; margin-bottom:4px;">阿玲越南小吃 後台</div>
+      <div style="font-size:13px; color:#999; margin-bottom:28px;">請輸入密碼以進入</div>
+      <input type="password" id="auth-pw-input" placeholder="密碼"
+        style="width:100%; padding:14px; border:2px solid #e5e7eb; border-radius:12px; font-size:18px; text-align:center; outline:none; font-family:inherit; box-sizing:border-box; letter-spacing:4px;"
+        onkeydown="if(event.key==='Enter') doLogin()">
+      <div id="auth-error" style="color:#d32f2f; font-size:13px; font-weight:800; margin-top:10px; min-height:18px;">
+      </div>
+      <button onclick="doLogin()" id="auth-login-btn"
+        style="width:100%; margin-top:14px; background:var(--primary); color:white; border:none; padding:16px; border-radius:12px; font-size:16px; font-weight:900; cursor:pointer; transition:opacity 0.2s;">
+        進入 →
+      </button>
+    </div>
+  </div>
+
+  <!-- ====== SETTINGS MODAL ====== -->
+  <div id="settings-modal"
+    style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9998; align-items:center; justify-content:center;">
+    <div
+      style="background:#fff; border-radius:20px; padding:28px; width:90%; max-width:400px; box-shadow:0 12px 40px rgba(0,0,0,0.3);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <span style="font-size:18px; font-weight:900;">⚙️ 設定</span>
+        <span onclick="closeSettings()" style="cursor:pointer; font-size:22px; color:#999;">✕</span>
+      </div>
+
+      <!-- Change Password -->
+      <div style="background:#f9fafb; border-radius:14px; padding:16px; margin-bottom:14px;">
+        <div style="font-weight:900; font-size:15px; margin-bottom:12px;">🔑 更換密碼</div>
+        <input type="password" id="chpw-current" placeholder="目前密碼"
+          style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; margin-bottom:8px; font-size:14px; box-sizing:border-box; font-family:inherit;">
+        <input type="password" id="chpw-new" placeholder="新密碼"
+          style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; margin-bottom:8px; font-size:14px; box-sizing:border-box; font-family:inherit;">
+        <input type="password" id="chpw-confirm" placeholder="確認新密碼"
+          style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; margin-bottom:8px; font-size:14px; box-sizing:border-box; font-family:inherit;">
+        <div id="chpw-msg" style="font-size:13px; font-weight:800; min-height:16px; margin-bottom:8px;"></div>
+        <button onclick="doChangePassword()"
+          style="width:100%; padding:10px; background:var(--primary); color:#fff; border:none; border-radius:8px; font-weight:900; cursor:pointer; font-size:14px;">儲存新密碼</button>
+      </div>
+
+      <!-- Temp Link -->
+      <div style="background:#f9fafb; border-radius:14px; padding:16px;">
+        <div style="font-weight:900; font-size:15px; margin-bottom:12px;">🔗 生成臨時連結</div>
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <select id="templink-hours"
+            style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; font-family:inherit;">
+            <option value="2">2 小時</option>
+            <option value="6">6 小時</option>
+            <option value="24" selected>24 小時</option>
+            <option value="72">3 天</option>
+            <option value="168">7 天</option>
+          </select>
+          <button onclick="doCreateTempLink()"
+            style="padding:10px 16px; background:#3b82f6; color:#fff; border:none; border-radius:8px; font-weight:900; cursor:pointer; font-size:14px;">生成</button>
+        </div>
+        <div id="templink-result"
+          style="font-size:12px; word-break:break-all; background:#eff6ff; padding:10px; border-radius:8px; display:none;">
+          <div style="font-weight:900; margin-bottom:4px; color:#1d4ed8;">临時連結（點擊復製）：</div>
+          <div id="templink-url" style="color:#1e40af; cursor:pointer; text-decoration:underline;"
+            onclick="copyTempLink()"></div>
+          <div id="templink-expiry" style="color:#6b7280; margin-top:4px;"></div>
+        </div>
+      </div>
+
+      <button onclick="doLogout()"
+        style="width:100%; margin-top:14px; padding:10px; background:#fee2e2; color:#d32f2f; border:none; border-radius:10px; font-weight:900; cursor:pointer; font-size:14px;">🚪
+        登出</button>
+    </div>
+  </div>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-title">🍱 阿玲越南小吃</div>
+        <div class="brand-sub">Live orders</div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" id="tab-live" onclick="switchTab('live')">Live</button>
+        <button class="tab" id="tab-history" onclick="switchTab('history')">歷史訂單</button>
+        <button class="tab" id="tab-menu" onclick="switchTab('menu')" style="color: var(--brand-red);">菜單管理</button>
+        <button class="mini-btn" onclick="testSound()">Test Sound</button>
+        <button class="mini-btn" onclick="openSettings()" style="background:#f3f4f6;">⚙️</button>
+      </div>
+    </div>
+
+    <div class="content" id="view-live">
+      <div class="split">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">準備中</div>
+              <div class="panel-sub">按取餐時間排序</div>
+            </div>
+            <div class="badge wait" id="count-left">0</div>
+          </div>
+          <div class="panel-body" id="list-left">
+            <div style="text-align:center; padding: 22px; color:#999;">載入中...</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">待領取</div>
+              <div class="panel-sub">已完成</div>
+            </div>
+            <div class="badge done" id="count-right">0</div>
+          </div>
+          <div class="panel-body" id="list-right">
+            <div style="text-align:center; padding: 22px; color:#999;">無</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content" id="view-history" style="display:none;">
+      <div class="panel" style="height: 100%;">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">歷史訂單</div>
+            <div class="panel-sub">按日期</div>
+          </div>
+        </div>
+        <div class="panel-body" id="list-history">
+          <div style="text-align:center; padding: 22px; color:#999;">載入中...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu Editor View -->
+    <div class="content" id="view-menu" style="display:none;">
+      <div class="split" style="grid-template-columns: 280px 1fr;">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">菜單分類</div>
+              <div class="panel-sub">選擇以編輯價格</div>
+            </div>
+            <button class="mini-btn" onclick="loadMenuData()">重整</button>
+          </div>
+          <div class="panel-body" id="menu-categories" style="padding: 0; background: #fff;">
+            <!-- Categories rendered here -->
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title" id="menu-editor-title">分類項目</div>
+              <div class="panel-sub">編輯價格 (留白表示隱藏)</div>
+            </div>
+            <div>
+              <button class="btn btn-yellow" style="padding: 8px 16px; font-size: 14px;" onclick="addNewMenuItem()">+
+                新增項目</button>
+              <button class="btn btn-primary" style="padding: 8px 16px; font-size: 14px; margin-left: 8px;"
+                onclick="saveMenuData()">儲存變更</button>
+            </div>
+          </div>
+          <div class="panel-body" id="menu-editor-body" style="background: #f9fafb;">
+            <div style="text-align:center; padding: 22px; color:#999;">請先從左側選擇分類</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen new order alert -->
+  <div class="new-alert" id="new-alert">
+    <div class="new-alert-box">
+      <h1 class="new-alert-title" id="new-alert-title">1 單 新訂單</h1>
+      <div class="new-alert-sub">點擊 “Review 訂單” 查看詳細並接單</div>
+      <div class="new-alert-actions">
+        <button class="btn btn-primary btn-block" onclick="reviewNextNewOrder()">Review 訂單</button>
+        <button class="btn btn-ghost btn-block" onclick="dismissNewAlert()">稍後</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review modal -->
+  <div id="reviewModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title">
+        <h3 style="display:flex; align-items:center;">Review 訂單</h3>
+        <div class="modal-close" onclick="closeModal()">✕</div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-box">
+          <div class="detail-label">訂單 / Order</div>
+          <div class="detail-value mono" id="review-order-key">-</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-label">LINE 顧客 / Buyer</div>
+          <div class="detail-value" id="review-customer">-</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-label">取餐時間</div>
+          <div class="detail-value" id="review-pickup">-</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-label">剩餘時間</div>
+          <div class="detail-value" id="review-eta" style="color: var(--brand-red);">-</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-label">狀態</div>
+          <div class="detail-value" id="review-status">-</div>
+        </div>
+      </div>
+
+      <div class="detail-content" id="review-content">-</div>
+
+      <div class="modal-actions" id="review-actions">
+        <button class="btn btn-primary" onclick="reviewAccept(this)">接單</button>
+        <button class="btn btn-yellow" onclick="reviewOpenChange()">需要更改</button>
+        <button class="btn btn-danger" onclick="reviewOpenReject()">無法接單</button>
+      </div>
+
+      <div class="modal-actions" id="review-actions-accepted" style="display:none;">
+        <button class="btn btn-primary" onclick="markReadyFromReview(this)">準備好了</button>
+        <button class="btn btn-danger"
+          onclick="if(confirm('您確定要取消此訂單嗎？不會通知客戶。')){ updateStatus(reviewingOrder.key, 'REJECTED', { reason: '取消並不回復客戶' }, this).then(() => closeModal()); }">取消訂單</button>
+        <button class="btn btn-ghost" onclick="closeModal()">關閉</button>
+      </div>
+
+      <div class="modal-actions" id="review-actions-done" style="display:none;">
+        <button class="btn btn-primary"
+          onclick="updateStatus(reviewingOrder.key, 'PICKED_UP', {}, this).then(() => closeModal());">已取餐</button>
+        <button class="btn btn-danger"
+          onclick="if(confirm('您確定要取消此訂單嗎？不會通知客戶。')){ updateStatus(reviewingOrder.key, 'REJECTED', { reason: '取消並不回復客戶' }, this).then(() => closeModal()); }">取消訂單</button>
+        <button class="btn btn-ghost" onclick="closeModal()">關閉</button>
+      </div>
+
+      <div class="modal-actions" id="review-actions-waiting" style="display:none;">
+        <button class="btn btn-primary" onclick="reviewAccept(this)">接單</button>
+        <button class="btn btn-danger" onclick="reviewForceCancel(this)">取消訂單</button>
+        <button class="btn btn-ghost" onclick="closeModal()">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change modal -->
+  <div id="changeModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title">
+        <h3>需要更改</h3>
+        <div class="modal-close" onclick="closeModal()">✕</div>
+      </div>
+      <label style="display:block; margin-top: 10px; font-weight: 1100; font-size: 20px;">原因 / 建議:</label>
+      <select id="change-reason"
+        style="width:100%; padding: 16px; margin-top: 10px; border-radius: 12px; border: 1px solid var(--border); font-size: 22px;"
+        onchange="onChangeReasonChange()">
+        <option value="時間需調整">時間太趕，需延後</option>
+        <option value="口味售完">該口味已售完</option>
+      </select>
+      <textarea id="change-note" rows="3" placeholder="建議時間 (例如: 11:00)"
+        style="width:100%; padding: 16px; margin-top: 16px; border-radius: 12px; border: 1px solid var(--border); font-size: 22px;"></textarea>
+
+      <div id="change-items-div" style="display: none;">
+        <div style="margin-top: 16px; font-weight: 1000; font-size: 18px; margin-bottom: 12px;">選擇已售完或缺貨的品項 :</div>
+
+        <div style="font-weight: 900; font-size: 16px; margin-bottom: 8px; color: #555;">🍞 麵包 / 餅皮</div>
+        <div class="checkbox-grid" style="margin-top: 0; margin-bottom: 16px;">
+          <label class="checkbox-label"><input type="checkbox" value="吐司" class="sold-item"> 吐司</label>
+          <label class="checkbox-label"><input type="checkbox" value="漢堡" class="sold-item"> 漢堡</label>
+          <label class="checkbox-label"><input type="checkbox" value="滿福堡" class="sold-item"> 滿福堡</label>
+          <label class="checkbox-label"><input type="checkbox" value="乳酪堡" class="sold-item"> 乳酪堡</label>
+          <label class="checkbox-label"><input type="checkbox" value="可頌" class="sold-item"> 可頌</label>
+          <label class="checkbox-label"><input type="checkbox" value="厚片" class="sold-item"> 厚片</label>
+          <label class="checkbox-label"><input type="checkbox" value="蛋餅" class="sold-item"> 蛋餅</label>
+          <label class="checkbox-label"><input type="checkbox" value="蔥抓餅" class="sold-item"> 蔥抓餅</label>
+        </div>
+
+        <div style="font-weight: 900; font-size: 16px; margin-bottom: 8px; color: #555;">🥩 主食 / 肉類</div>
+        <div class="checkbox-grid" style="margin-top: 0; margin-bottom: 16px;">
+          <label class="checkbox-label"><input type="checkbox" value="煎蛋" class="sold-item"> 煎蛋</label>
+          <label class="checkbox-label"><input type="checkbox" value="火腿" class="sold-item"> 火腿</label>
+          <label class="checkbox-label"><input type="checkbox" value="香雞" class="sold-item"> 香雞</label>
+          <label class="checkbox-label"><input type="checkbox" value="培根" class="sold-item"> 培根</label>
+          <label class="checkbox-label"><input type="checkbox" value="豬排" class="sold-item"> 豬排</label>
+          <label class="checkbox-label"><input type="checkbox" value="厚牛" class="sold-item"> 厚牛</label>
+          <label class="checkbox-label"><input type="checkbox" value="卡拉雞" class="sold-item"> 卡拉雞</label>
+        </div>
+
+        <div style="font-weight: 900; font-size: 16px; margin-bottom: 8px; color: #555;">🍝 麵類 / 飯類 / 沙拉</div>
+        <div class="checkbox-grid" style="margin-top: 0; margin-bottom: 16px;">
+          <label class="checkbox-label"><input type="checkbox" value="義大利麵" class="sold-item"> 義大利麵</label>
+          <label class="checkbox-label"><input type="checkbox" value="燉飯" class="sold-item"> 燉飯</label>
+          <label class="checkbox-label"><input type="checkbox" value="蛋包飯" class="sold-item"> 蛋包飯</label>
+          <label class="checkbox-label"><input type="checkbox" value="炒泡麵" class="sold-item"> 炒泡麵</label>
+          <label class="checkbox-label"><input type="checkbox" value="沙拉" class="sold-item"> 沙拉</label>
+          <label class="checkbox-label"><input type="checkbox" value="鬆餅" class="sold-item"> 鬆餅</label>
+        </div>
+
+        <div style="font-weight: 900; font-size: 16px; margin-bottom: 8px; color: #555;">🥤 飲品 & 加料</div>
+        <div class="checkbox-grid" style="margin-top: 0;">
+          <label class="checkbox-label"><input type="checkbox" value="起司" class="sold-item"> 起司</label>
+          <label class="checkbox-label"><input type="checkbox" value="豆漿" class="sold-item"> 豆漿</label>
+          <label class="checkbox-label"><input type="checkbox" value="紅茶" class="sold-item"> 紅茶</label>
+          <label class="checkbox-label"><input type="checkbox" value="咖啡" class="sold-item"> 咖啡</label>
+          <label class="checkbox-label"><input type="checkbox" value="奶茶" class="sold-item"> 奶茶</label>
+          <label class="checkbox-label"><input type="checkbox" value="果醬" class="sold-item"> 果醬</label>
+        </div>
+      </div>
+
+      <div class="modal-actions two" style="margin-top: 16px;">
+        <button class="btn btn-yellow" onclick="confirmAction('CHANGE', this)">傳送建議</button>
+        <button class="btn btn-ghost" onclick="closeModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reject modal -->
+  <div id="rejectModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title">
+        <h3>無法接單</h3>
+        <div class="modal-close" onclick="closeModal()">✕</div>
+      </div>
+      <select id="reject-reason"
+        style="width:100%; padding: 16px; margin-top: 16px; border-radius: 12px; border: 1px solid var(--border); font-size: 22px;">
+        <option value="今日已售完">今日已售完</option>
+        <option value="訂單過多">訂單過多，暫不接單</option>
+        <option value="已過營業時間">已過營業時間</option>
+        <option value="取消並不回復客戶">取消並不回復客戶</option>
+      </select>
+      <div class="modal-actions two">
+        <button class="btn btn-danger" onclick="confirmAction('REJECT', this)">確認拒絕</button>
+        <button class="btn btn-ghost" onclick="closeModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const WORKER_BASE = "https://alinh.thuanmnc.workers.dev";
+
+    // ====== AUTH ======
+    async function checkAuth() {
+      const overlay = document.getElementById("auth-overlay");
+      const errEl = document.getElementById("auth-error");
+      overlay.style.display = "flex";
+
+      // 1. Check URL temp token
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("t");
+      if (token) {
+        try {
+          const res = await fetch(`${WORKER_BASE}/api/auth/templink?t=${encodeURIComponent(token)}&_t=${Date.now()}`);
+          const data = await res.json();
+          if (data.ok) {
+            grantAccess();
+            return;
+          } else {
+            // Link expired or invalid - FORCE LOGOUT
+            sessionStorage.removeItem("brunch_auth");
+            errEl.innerText = "此臨時連結已過期或無效";
+            setTimeout(() => document.getElementById("auth-pw-input").focus(), 100);
+            return;
+          }
+        } catch (e) {
+          console.error("Auth check failed", e);
+        }
+      }
+
+      // 2. Check sessionStorage (already logged in this tab)
+      if (sessionStorage.getItem("brunch_auth") === "1") {
+        grantAccess();
+        return;
+      }
+
+      // Show login overlay
+      setTimeout(() => document.getElementById("auth-pw-input").focus(), 100);
+    }
+
+    function grantAccess() {
+      sessionStorage.setItem("brunch_auth", "1");
+      const overlay = document.getElementById("auth-overlay");
+      overlay.style.display = "none";
+    }
+
+    async function doLogin() {
+      const pw = document.getElementById("auth-pw-input").value;
+      const errEl = document.getElementById("auth-error");
+      const btn = document.getElementById("auth-login-btn");
+      if (!pw) { errEl.innerText = "請輸入密碼"; return; }
+      btn.innerText = "驗證中..."; btn.disabled = true;
+      try {
+        const res = await fetch(`${WORKER_BASE}/api/auth`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: pw })
+        });
+        const data = await res.json();
+        if (data.ok) { grantAccess(); }
+        else { errEl.innerText = "密碼錯誤，請重試"; document.getElementById("auth-pw-input").value = ""; }
+      } catch (e) { errEl.innerText = "網路錯誤，請重試"; }
+      btn.innerText = "進入 →"; btn.disabled = false;
+    }
+
+    function doLogout() {
+      sessionStorage.removeItem("brunch_auth");
+      window.location.reload();
+    }
+
+    function openSettings() {
+      const m = document.getElementById("settings-modal");
+      m.style.display = "flex";
+      // Reset fields
+      ["chpw-current", "chpw-new", "chpw-confirm"].forEach(id => document.getElementById(id).value = "");
+      document.getElementById("chpw-msg").innerText = "";
+      document.getElementById("templink-result").style.display = "none";
+    }
+    function closeSettings() { document.getElementById("settings-modal").style.display = "none"; }
+
+    async function doChangePassword() {
+      const current = document.getElementById("chpw-current").value;
+      const newPw = document.getElementById("chpw-new").value;
+      const confirm = document.getElementById("chpw-confirm").value;
+      const msg = document.getElementById("chpw-msg");
+      if (!current || !newPw) { msg.style.color = "#d32f2f"; msg.innerText = "請填寫所有欄位"; return; }
+      if (newPw !== confirm) { msg.style.color = "#d32f2f"; msg.innerText = "新密碼不一致"; return; }
+      if (newPw.length < 4) { msg.style.color = "#d32f2f"; msg.innerText = "密碼至少4碼"; return; }
+      try {
+        const res = await fetch(`${WORKER_BASE}/api/auth/change`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ current, newPassword: newPw })
+        });
+        const data = await res.json();
+        if (data.ok) { msg.style.color = "#00b900"; msg.innerText = "密碼已更新！"; }
+        else { msg.style.color = "#d32f2f"; msg.innerText = data.error || "失敗"; }
+      } catch (e) { msg.style.color = "#d32f2f"; msg.innerText = "網路錯誤"; }
+    }
+
+    let _tempLinkPw = null;
+    async function doCreateTempLink() {
+      // Re-use the session to get password - ask for it once
+      const pw = prompt("請輸入目前密碼以生成臨時連結：");
+      if (!pw) return;
+      const hours = parseInt(document.getElementById("templink-hours").value);
+      try {
+        const res = await fetch(`${WORKER_BASE}/api/auth/templink`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: pw, hours })
+        });
+        const data = await res.json();
+        if (!data.ok) { alert("密碼錯誤"); return; }
+        const url = `${window.location.origin}${window.location.pathname}?t=${data.token}`;
+        document.getElementById("templink-url").innerText = url;
+        const expiry = new Date(Date.now() + data.hours * 3600000);
+        document.getElementById("templink-expiry").innerText = `有效至：${expiry.toLocaleString("zh-TW")}`;
+        document.getElementById("templink-result").style.display = "block";
+      } catch (e) { alert("生成失敗"); }
+    }
+
+    function copyTempLink() {
+      const url = document.getElementById("templink-url").innerText;
+      navigator.clipboard.writeText(url).then(() => alert("已復製連結！"));
+    }
+
+    // Run auth check on page load
+    checkAuth();
+
+
+    let latestOrders = [];
+    let pendingNewOrders = [];
+    let reviewingOrder = null;
+    let currentOrderKey = null;
+    let activeTab = "live";
+    let newAlertSnoozeUntilMs = 0;
+    let snoozedNewOrderKeys = new Set();
+    let localOverrides = {};
+    const historyExpandedDates = new Set(); // persists toggle state across re-renders
+    let historyInitialized = false;
+
+    const knownOrderKeys = new Set();
+    const processingKeys = new Set();
+    let isFirstLoad = true;
+    let soundUnlocked = false;
+    let audioCtx = null;
+    let alarmIntervalId = null;
+    let alarmTimeoutIds = [];
+
+    // Unlock audio after a user gesture (Chrome autoplay policy)
+    async function unlockSound() {
+      soundUnlocked = true;
+      try {
+        const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextCtor) return;
+        if (!audioCtx) audioCtx = new AudioContextCtor();
+        if (audioCtx.state === "suspended") await audioCtx.resume();
+      } catch (e) {
+        console.error("unlockSound failed:", e);
+      }
+    }
+    document.addEventListener("click", unlockSound, { once: true });
+    document.addEventListener("touchstart", unlockSound, { once: true });
+    document.addEventListener("keydown", unlockSound, { once: true });
+
+    function escapeHtml(s) {
+      return String(s !== null && s !== undefined ? s : "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function parsePickupTimeMs(timeStr) {
+      if (!timeStr || typeof timeStr !== "string") return NaN;
+      const m = timeStr.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})/);
+      if (!m) return NaN;
+      const iso = `${m[1]}T${m[2]}:00`;
+      const ms = new Date(iso).getTime();
+      return Number.isNaN(ms) ? NaN : ms;
+    }
+
+    function sortByPickupTimeAsc(a, b) {
+      const at = parsePickupTimeMs(a && a.time);
+      const bt = parsePickupTimeMs(b && b.time);
+      if (Number.isNaN(at) || Number.isNaN(bt)) return ((a && a.createdAt) || 0) - ((b && b.createdAt) || 0);
+      return at - bt;
+    }
+
+    function formatEta(timeStr) {
+      const target = parsePickupTimeMs(timeStr);
+      if (Number.isNaN(target)) return "-";
+      const diffMs = target - Date.now();
+      const diffMin = Math.round(diffMs / 60000);
+      if (diffMin <= 0) return `已到 / ${Math.abs(diffMin)} 分鐘前`;
+      if (diffMin < 60) return `剩 ${diffMin} 分鐘`;
+      const h = Math.floor(diffMin / 60);
+      const m = diffMin % 60;
+      return `剩 ${h} 小時 ${m} 分`;
+    }
+
+    function shortItems(content) {
+      if (!content) return "";
+      const lines = String(content).split("\n").map(s => s.trim()).filter(Boolean);
+      return lines.slice(0, 6).join("\n");
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      document.getElementById("tab-live").classList.toggle("active", tab === "live");
+      document.getElementById("tab-history").classList.toggle("active", tab === "history");
+      document.getElementById("tab-menu").classList.toggle("active", tab === "menu");
+      document.getElementById("view-live").style.display = tab === "live" ? "block" : "none";
+      document.getElementById("view-history").style.display = tab === "history" ? "block" : "none";
+      document.getElementById("view-menu").style.display = tab === "menu" ? "block" : "none";
+
+      if (tab === "menu" && !currentMenuData) {
+        loadMenuData();
+      } else if (tab !== "menu") {
+        renderAll();
+      }
+    }
+
+    // --- Dynamic Menu Editor Logic ---
+    let currentMenuData = null;
+    let activeCategoryIndex = -1;
+
+    async function loadMenuData() {
+      try {
+        const res = await fetch(`${WORKER_BASE}/api/menu?_t=${Date.now()}`);
+        if (!res.ok) throw new Error("Failed to load");
+        currentMenuData = await res.json();
+        renderMenuCategories();
+        if (activeCategoryIndex >= 0) {
+          renderMenuCategoryEditor(activeCategoryIndex);
+        } else {
+          document.getElementById('menu-editor-body').innerHTML = '<div style="text-align:center; padding: 22px; color:#999;">請先從左側選擇分類</div>';
+          document.getElementById('menu-editor-title').innerText = '分類項目';
+        }
+      } catch (e) {
+        alert("無法載入菜單資料：" + e.message);
+      }
+    }
+
+    function renderMenuCategories() {
+      const container = document.getElementById("menu-categories");
+      container.innerHTML = "";
+      if (!currentMenuData || !Array.isArray(currentMenuData)) return;
+
+      currentMenuData.forEach((cat, index) => {
+        const div = document.createElement("div");
+        div.style.cssText = `
+          padding: 16px; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 1000; font-size: 18px;
+          background: ${activeCategoryIndex === index ? '#f3f4f6' : '#fff'};
+          border-left: 4px solid ${activeCategoryIndex === index ? 'var(--brand-red)' : 'transparent'};
+          display: flex; justify-content: space-between; align-items: center;
+        `;
+        div.innerHTML = `
+          <span>${escapeHtml(cat.title)}</span>
+          <span style="font-size: 14px; font-weight: 900; color: var(--muted);">${cat.items.length} 項目</span>
+        `;
+        div.onclick = () => {
+          activeCategoryIndex = index;
+          renderMenuCategories();
+          renderMenuCategoryEditor(index);
+        };
+        container.appendChild(div);
+      });
+    }
+
+    function renderMenuCategoryEditor(index) {
+      if (!currentMenuData || !currentMenuData[index]) return;
+      const cat = currentMenuData[index];
+      document.getElementById("menu-editor-title").innerText = cat.title + " (全部 " + cat.items.length + " 項)";
+
+      const container = document.getElementById("menu-editor-body");
+      container.innerHTML = "";
+
+      let draggedItemIndex = null;
+
+      cat.items.forEach((item, iIdx) => {
+        const row = document.createElement("div");
+        row.style.cssText = "background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; transition: opacity 0.2s; cursor: grab;";
+        row.draggable = true;
+
+        row.addEventListener("dragstart", (e) => {
+          draggedItemIndex = iIdx;
+          e.dataTransfer.effectAllowed = "move";
+          setTimeout(() => row.style.opacity = "0.4", 0);
+        });
+        row.addEventListener("dragend", (e) => {
+          row.style.opacity = "1";
+        });
+        row.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          row.style.border = "2px dashed var(--primary)";
+        });
+        row.addEventListener("dragleave", (e) => {
+          row.style.border = "1px solid var(--border)";
+        });
+        row.addEventListener("drop", (e) => {
+          e.preventDefault();
+          row.style.border = "1px solid var(--border)";
+          if (draggedItemIndex !== null && draggedItemIndex !== iIdx) {
+            syncMenuDataFromDOM();
+            let arr = currentMenuData[index].items;
+            const movedItem = arr.splice(draggedItemIndex, 1)[0];
+            arr.splice(iIdx, 0, movedItem);
+            renderMenuCategoryEditor(index);
+          }
+        });
+
+        let priceInputsHtml = '';
+        if (item.prices) {
+          // Uses pricing array
+          let descriptors = cat.sizes || cat.sauces || [];
+          if (descriptors.length === 0) descriptors = item.prices.map((_, i) => "價格" + (i + 1));
+
+          priceInputsHtml = `<div style="display:flex; gap: 8px; flex-wrap: wrap;">`;
+          for (let i = 0; i < item.prices.length; i++) {
+            const pVal = item.prices[i] !== null && item.prices[i] !== undefined ? item.prices[i] : "";
+            const dLabel = descriptors[i] || "";
+            priceInputsHtml += `<label style="display:flex; flex-direction:column; font-weight: 800; font-size:14px; color:#555;">
+                  ${dLabel}
+                  <input type="number" data-cidx="${index}" data-iidx="${iIdx}" data-pidx="${i}" value="${pVal}" placeholder="不販售" style="padding: 8px; width: 80px; border-radius: 8px; border: 1px solid #ccc; font-weight:800; font-family:inherit;">
+                </label>`;
+          }
+          priceInputsHtml += `</div>`;
+        } else {
+          // Single price
+          const pVal = item.price !== null && item.price !== undefined ? item.price : "";
+          priceInputsHtml = `<label style="display:flex; flex-direction:column; font-weight: 800; font-size:14px; color:#555;">
+              單價
+              <input type="number" data-cidx="${index}" data-iidx="${iIdx}" value="${pVal}" placeholder="不販售" style="padding: 8px; width: 100px; border-radius: 8px; border: 1px solid #ccc; font-weight:800; font-family:inherit;">
+            </label>`;
+        }
+
+        row.innerHTML = `
+          <div style="display:flex; justify-content: space-between; align-items: center;">
+            <div style="display:flex; align-items: center; gap: 8px;">
+              <div style="color: #ccc; font-size: 24px; cursor: grab;">☰</div>
+              <input type="text" value="${escapeHtml(item.name)}" data-name-cidx="${index}" data-name-iidx="${iIdx}" style="font-size: 18px; font-weight: 1000; color: #111; padding: 8px; border: 1px solid #ccc; border-radius: 8px; flex: 1; max-width: 250px;">
+            </div>
+            <button class="btn btn-ghost" style="padding: 6px 12px; color: var(--brand-red); font-size:14px;" onclick="removeMenuItem(${index}, ${iIdx})">刪除</button>
+          </div>
+          ${priceInputsHtml}
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function removeMenuItem(cIdx, iIdx) {
+      if (confirm("確定要刪除這個項目嗎?")) {
+        currentMenuData[cIdx].items.splice(iIdx, 1);
+        renderMenuCategoryEditor(cIdx);
+      }
+    }
+
+    function addNewMenuItem() {
+      if (activeCategoryIndex < 0 || !currentMenuData) return;
+      syncMenuDataFromDOM(); // Sync first so we don't lose data on re-render
+      const cat = currentMenuData[activeCategoryIndex];
+      let newItem = { name: "新項目" };
+
+      // Determine shape based on existing items
+      if (cat.items.length > 0 && cat.items[0].prices) {
+        newItem.prices = new Array(cat.items[0].prices.length).fill(null);
+      } else {
+        newItem.price = 0;
+      }
+
+      cat.items.unshift(newItem); // Add to the TOP instead of bottom
+      renderMenuCategoryEditor(activeCategoryIndex);
+    }
+
+    function syncMenuDataFromDOM() {
+      document.querySelectorAll('#menu-editor-body input[data-name-cidx]').forEach(inp => {
+        const cIdx = parseInt(inp.getAttribute('data-name-cidx'));
+        const iIdx = parseInt(inp.getAttribute('data-name-iidx'));
+        currentMenuData[cIdx].items[iIdx].name = inp.value;
+      });
+
+      document.querySelectorAll('#menu-editor-body input[data-cidx]').forEach(inp => {
+        const cIdx = parseInt(inp.getAttribute('data-cidx'));
+        const iIdx = parseInt(inp.getAttribute('data-iidx'));
+        const pIdxStr = inp.getAttribute('data-pidx');
+        const val = inp.value.trim() === "" ? null : parseFloat(inp.value);
+
+        if (pIdxStr !== null && pIdxStr !== undefined) {
+          currentMenuData[cIdx].items[iIdx].prices[parseInt(pIdxStr)] = val;
+        } else {
+          currentMenuData[cIdx].items[iIdx].price = val;
+        }
+      });
+    }
+
+    async function saveMenuData() {
+      if (!currentMenuData) return;
+      if (!confirm("確定要儲存所有變更嗎？這會直接實時影響顧客端點餐頁面。")) return;
+
+      syncMenuDataFromDOM();
+
+      const btn = document.querySelector("#view-menu .panel-header .btn-primary");
+      const oldText = btn.innerText;
+      btn.innerText = "儲存中...";
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${WORKER_BASE}/api/menu`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(currentMenuData)
+        });
+        if (!res.ok) throw new Error("API returned " + res.status);
+        alert("儲存成功！");
+        renderMenuCategories();
+      } catch (e) {
+        alert("儲存失敗：" + e.message);
+      } finally {
+        btn.innerText = oldText;
+        btn.disabled = false;
+      }
+    }
+
+    async function fetchOrders() {
+      try {
+        const response = await fetch(`${WORKER_BASE}/api/orders?_t=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`fetch failed: ${response.status}`);
+        let orders = await response.json();
+        if (!Array.isArray(orders)) orders = [];
+
+        // Deduplicate
+        const uniqueMap = new Map();
+        orders.forEach(o => { if (o && o.key) uniqueMap.set(o.key, o); });
+        latestOrders = Array.from(uniqueMap.values());
+
+        // New arrivals => sound
+        const newArrivals = latestOrders.filter(o => o && o.key && !knownOrderKeys.has(o.key));
+        newArrivals.forEach(o => { if (o && o.key) knownOrderKeys.add(o.key); });
+
+        // NEW orders => fullscreen alert
+        pendingNewOrders = latestOrders.filter(o => o && o.status === "NEW").slice().sort(sortByPickupTimeAsc);
+        if (!isFirstLoad && newArrivals.length > 0 && pendingNewOrders.length > 0) {
+          startContinuousAlarm();
+        }
+        isFirstLoad = false;
+        updateNewAlert();
+
+        renderAll();
+      } catch (e) {
+        console.error(e);
+        document.getElementById("list-left").innerHTML = `<div style="text-align:center; padding: 22px; color:#d32f2f;">無法載入: ${escapeHtml((e && e.message) || e)}</div>`;
+        document.getElementById("list-right").innerHTML = `<div style="text-align:center; padding: 22px; color:#d32f2f;">無法載入</div>`;
+        document.getElementById("list-history").innerHTML = `<div style="text-align:center; padding: 22px; color:#d32f2f;">無法載入</div>`;
+      }
+    }
+
+    function renderAll() {
+      if (!Array.isArray(latestOrders)) return;
+
+      // Filter/Apply local overrides (ignore server data if override is < 15s old)
+      const now = Date.now();
+      const currentOrders = latestOrders.map(o => {
+        const override = localOverrides[o.key];
+        if (override && (now - override.time < 15000)) {
+          return { ...o, status: override.status };
+        }
+        // Cleanup old overrides
+        if (override && (now - override.time >= 15000)) {
+          delete localOverrides[o.key];
+        }
+        return o;
+      });
+
+      const leftOrders = currentOrders
+        .filter(o => o && (o.status === "NEW" || o.status === "ACCEPTED" || o.status === "WAITING_CUSTOMER_CHANGE" || o.status === "WAITING_CUSTOMER_REJECT"))
+        .slice()
+        .sort(sortByPickupTimeAsc);
+
+      const rightOrders = currentOrders
+        .filter(o => o && o.status === "DONE")
+        .slice()
+        .sort(sortByPickupTimeAsc);
+
+      const historyOrders = currentOrders
+        .filter(o => o && ["PICKED_UP", "REJECTED"].includes(o.status))
+        .slice()
+        .sort((a, b) => ((b && b.createdAt) || 0) - ((a && a.createdAt) || 0));
+
+      document.getElementById("count-left").innerText = String(leftOrders.length);
+      document.getElementById("count-right").innerText = String(rightOrders.length);
+
+      if (activeTab === "live") {
+        renderListLeft(leftOrders);
+        renderListRight(rightOrders);
+      } else {
+        renderHistory(historyOrders);
+      }
+    }
+
+    function renderListLeft(orders) {
+      const container = document.getElementById("list-left");
+      container.innerHTML = "";
+      if (orders.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 22px; color:#999;">無</div>`;
+        return;
+      }
+
+      orders.forEach(order => {
+        const isNew = order.status === "NEW";
+        const eta = formatEta(order.time);
+
+        const tile = document.createElement("div");
+        tile.className = `tile ${isNew ? "new" : ""}`;
+        tile.onclick = () => openReview(order.key);
+
+        let badge = "";
+        let rightActions = "";
+
+        if (isNew) {
+          badge = `<span class="badge new">NEW</span>`;
+          rightActions = `<button class="btn btn-ghost btn-block" onclick="event.stopPropagation(); openReview('${escapeHtml(order.key)}')">Review</button>`;
+        } else if (order.status === "ACCEPTED") {
+          badge = `<span class="badge wait">DOING</span>`;
+          rightActions = `<button class="btn btn-primary btn-block" onclick="event.stopPropagation(); updateStatus('${escapeHtml(order.key)}','DONE', {}, this)">準備完成</button>`;
+        } else {
+          badge = `<span class="badge wait" style="background:#e5e7eb; color:#4b5563;">等客戶確認</span>`;
+          rightActions = `<button class="btn btn-block" style="background:#f3f4f6; color:#9ca3af; cursor:not-allowed;" disabled>等待回覆</button>`;
+        }
+
+        tile.innerHTML = `
+          <div>
+            <div class="tile-top">
+              <span class="tile-customer">${escapeHtml(order.customer || "客戶")}</span>
+              ${badge}
+              <span class="tile-meta">#${escapeHtml(order.key)}</span>
+            </div>
+            <div class="tile-top" style="margin-top: 6px;">
+              <span class="tile-meta">取餐: ${escapeHtml(order.time || "-")}</span>
+              <span class="tile-meta" style="color: var(--brand-red); font-weight: 1100;">${escapeHtml(eta)}</span>
+            </div>
+            <div class="tile-items">${escapeHtml(shortItems(order.content))}</div>
+          </div>
+          <div class="tile-actions">
+            ${rightActions}
+          </div>
+        `;
+
+        container.appendChild(tile);
+      });
+    }
+
+    function renderListRight(orders) {
+      const container = document.getElementById("list-right");
+      container.innerHTML = "";
+      if (orders.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 22px; color:#999;">無</div>`;
+        return;
+      }
+
+      orders.forEach(order => {
+        const eta = formatEta(order.time);
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        tile.onclick = () => openReview(order.key);
+
+        tile.innerHTML = `
+          <div>
+            <div class="tile-top">
+              <span class="tile-customer">${escapeHtml(order.customer || "客戶")}</span>
+              <span class="badge done">READY</span>
+              <span class="tile-meta">#${escapeHtml(order.key)}</span>
+            </div>
+            <div class="tile-top" style="margin-top: 6px;">
+              <span class="tile-meta">取餐: ${escapeHtml(order.time || "-")}</span>
+              <span class="tile-meta" style="color: var(--brand-red); font-weight: 1100;">${escapeHtml(eta)}</span>
+            </div>
+            <div class="tile-items">${escapeHtml(shortItems(order.content))}</div>
+          </div>
+          <div class="tile-actions">
+            <button class="btn btn-yellow btn-block" onclick="event.stopPropagation(); updateStatus('${escapeHtml(order.key)}','PICKED_UP', {}, this)">已取餐</button>
+          </div>
+        `;
+        container.appendChild(tile);
+      });
+    }
+
+    function groupByDate(orders) {
+      const map = new Map();
+      orders.forEach(o => {
+        let d = "Unknown";
+        if (o.createdAt) {
+          const dt = new Date(o.createdAt);
+          const nowTaiwan = new Date(dt.getTime() + 8 * 3600000);
+          const yyyy = nowTaiwan.getUTCFullYear();
+          const mm = String(nowTaiwan.getUTCMonth() + 1).padStart(2, "0");
+          const dd = String(nowTaiwan.getUTCDate()).padStart(2, "0");
+          d = `${yyyy}-${mm}-${dd}`;
+        } else if (o && o.time && typeof o.time === "string" && o.time.match(/^\d{4}-\d{2}-\d{2}/)) {
+          d = o.time.slice(0, 10);
+        }
+        if (!map.has(d)) map.set(d, []);
+        map.get(d).push(o);
+      });
+      return map;
+    }
+
+    function renderHistory(orders) {
+      const container = document.getElementById("list-history");
+      container.innerHTML = "";
+      if (orders.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 22px; color:#999;">歷史訂單無</div>`;
+        return;
+      }
+
+      const grouped = groupByDate(orders);
+      const sortedDates = Array.from(grouped.keys()).sort((a, b) => b.localeCompare(a));
+
+      // On first render, auto-expand the latest date only
+      if (!historyInitialized && sortedDates.length > 0) {
+        historyExpandedDates.add(sortedDates[0]);
+        historyInitialized = true;
+      }
+
+      sortedDates.forEach((date, dateIdx) => {
+        let items = grouped.get(date);
+        items.sort((a, b) => {
+          const timeA = a.pickedUpAt || a.createdAt || 0;
+          const timeB = b.pickedUpAt || b.createdAt || 0;
+          return timeB - timeA;
+        });
+
+        const isLatest = dateIdx === 0;
+        const isExpanded = historyExpandedDates.has(date);
+        const totalOrders = items.length;
+        const revenue = items.reduce((sum, o) => sum + (parseInt(o.total) || 0), 0);
+
+        // --- Collapsible date header ---
+        const headerRow = document.createElement("div");
+        headerRow.style.cssText = `
+          display:flex; align-items:center; justify-content:space-between;
+          padding:12px 14px; margin-bottom:6px; border-radius:12px;
+          background:#f3f4f6;
+          cursor:pointer; user-select:none;
+        `;
+        headerRow.innerHTML = `
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="font-size:17px; font-weight:900; color:#111;">${escapeHtml(date)}</span>
+            <span style="font-size:13px; font-weight:800; background:rgba(0,0,0,0.1); padding:2px 8px; border-radius:99px;">${totalOrders} 單</span>
+            ${revenue > 0 ? `<span style="font-size:13px; font-weight:900; color:var(--brand-red);">營收 $${revenue}</span>` : ''}
+          </div>
+          <span class="toggle-icon" style="font-size:18px; line-height:1;">${isExpanded ? '▲' : '▼'}</span>
+        `;
+        container.appendChild(headerRow);
+
+        // --- Order tiles for this date ---
+        const listWrap = document.createElement("div");
+        listWrap.style.display = isExpanded ? "block" : "none";
+
+        items.forEach(order => {
+          const tile = document.createElement("div");
+          tile.className = "tile";
+          tile.onclick = () => openReview(order.key);
+          const badge = order.status === "PICKED_UP"
+            ? `<span class="badge done">PICKED</span>`
+            : `<span class="badge" style="background:#fee2e2;color:#b91c1c;">${escapeHtml(order.status)}</span>`;
+
+          tile.innerHTML = `
+            <div style="flex:1; min-width:0;">
+              <div class="tile-top">
+                <span class="tile-customer">${escapeHtml(order.customer || "客戶")}</span>
+                ${badge}
+                <span class="tile-meta">#${escapeHtml(order.key)}</span>
+              </div>
+              <div style="display:flex; gap:12px; margin-top:4px;">
+                <span class="tile-meta">取餐: ${escapeHtml(order.time || "-")}</span>
+                ${order.total ? `<span class="tile-meta" style="color:var(--primary); font-weight:900;">$${order.total}</span>` : ''}
+              </div>
+              <div class="tile-items">${escapeHtml(shortItems(order.content))}</div>
+            </div>
+            <div class="tile-actions">
+              <button class="btn btn-ghost btn-block" onclick="event.stopPropagation(); openReview('${escapeHtml(order.key)}')">查看</button>
+            </div>
+          `;
+          listWrap.appendChild(tile);
+        });
+
+        container.appendChild(listWrap);
+
+        headerRow.addEventListener("click", () => {
+          const isOpen = listWrap.style.display !== "none";
+          listWrap.style.display = isOpen ? "none" : "block";
+          headerRow.querySelector(".toggle-icon").textContent = isOpen ? "▼" : "▲";
+          // Persist toggle state so re-render doesn't reset it
+          if (isOpen) {
+            historyExpandedDates.delete(date);
+          } else {
+            historyExpandedDates.add(date);
+          }
+        });
+      });
+    }
+
+    function updateNewAlert() {
+      const count = pendingNewOrders.length;
+      const alertEl = document.getElementById("new-alert");
+      const titleEl = document.getElementById("new-alert-title");
+
+      if (count <= 0) {
+        alertEl.style.display = "none";
+        newAlertSnoozeUntilMs = 0;
+        snoozedNewOrderKeys = new Set();
+        stopContinuousAlarm();
+        return;
+      }
+
+      // Kiểm tra xem có BẤT KỲ bảng nào liên quan đến Review đang mở không
+      const isReviewing =
+        document.getElementById("reviewModal").style.display === "flex" ||
+        document.getElementById("changeModal").style.display === "flex" ||
+        document.getElementById("rejectModal").style.display === "flex";
+
+      if (Date.now() < newAlertSnoozeUntilMs || isReviewing) {
+        const hasBrandNew = pendingNewOrders.some(o => o && o.key && !snoozedNewOrderKeys.has(o.key));
+        if (!hasBrandNew) {
+          alertEl.style.display = "none";
+          stopContinuousAlarm();
+          return;
+        }
+      }
+      titleEl.innerText = `${count} 單 新訂單`;
+      alertEl.style.display = "flex";
+      startContinuousAlarm();
+    }
+
+    function dismissNewAlert() {
+      newAlertSnoozeUntilMs = Date.now() + 30_000;
+      snoozedNewOrderKeys = new Set(pendingNewOrders.map(o => o && o.key).filter(Boolean));
+      document.getElementById("new-alert").style.display = "none";
+      stopContinuousAlarm();
+    }
+
+    function reviewNextNewOrder() {
+      if (pendingNewOrders.length <= 0) {
+        dismissNewAlert();
+        return;
+      }
+      openReview(pendingNewOrders[0].key);
+    }
+
+    function openReview(orderKey) {
+      const order = (latestOrders || []).find(o => o && o.key === orderKey);
+      if (!order) return;
+      reviewingOrder = order;
+
+      if (order.status === "NEW") {
+        dismissNewAlert();
+      }
+
+      document.getElementById("review-order-key").innerText = order.key || "-";
+      document.getElementById("review-customer").innerText = order.customer || "-";
+      document.getElementById("review-pickup").innerText = order.time || "-";
+      document.getElementById("review-eta").innerText = formatEta(order.time);
+      document.getElementById("review-status").innerText = order.status || "-";
+      document.getElementById("review-content").innerHTML = formatContentHtml(order);
+
+      const actionsNew = document.getElementById("review-actions");
+      const actionsAccepted = document.getElementById("review-actions-accepted");
+      const actionsWaiting = document.getElementById("review-actions-waiting");
+      const actionsDone = document.getElementById("review-actions-done");
+
+      actionsNew.style.display = "none";
+      actionsAccepted.style.display = "none";
+      actionsWaiting.style.display = "none";
+      if (actionsDone) actionsDone.style.display = "none";
+
+      if (order.status === "NEW") {
+        actionsNew.style.display = "grid";
+      } else if (order.status === "ACCEPTED") {
+        actionsAccepted.style.display = "grid";
+      } else if (order.status === "DONE") {
+        if (actionsDone) actionsDone.style.display = "grid";
+      } else if (order.status === "WAITING_CUSTOMER_CHANGE" || order.status === "WAITING_CUSTOMER_REJECT") {
+        actionsWaiting.style.display = "grid";
+      }
+
+      document.getElementById("reviewModal").style.display = "flex";
+    }
+
+    function formatContentHtml(order) {
+      const raw = String(order.content || "");
+      if (order.reason === "Đơn qua tin nhắn") {
+        return `<div class="detail-lines"><div class="detail-line primary" style="white-space: pre-wrap; display: block;">${escapeHtml(raw)}</div></div>`;
+      }
+      const lines = raw.split("\n").map(l => l.trimEnd()).filter(l => l.trim() !== "");
+      if (lines.length === 0 && !order.note) return `<div class="detail-lines"><div class="detail-line">-</div></div>`;
+
+      let formattedLines = lines.map(line => {
+        const t = line.trimStart();
+        const isSub = t.startsWith("-") || t.startsWith("•") || t.startsWith("－") || t.startsWith("↳") || t.startsWith("↳");
+        if (isSub) {
+          return `<div style="color: #666; font-size: 16px; margin-top: 4px; padding-left: 14px;">${escapeHtml(line)}</div>`;
+        }
+        return `<div style="font-weight: 1100; font-size: 24px; color: #111; margin-top: 12px;">${escapeHtml(line)}</div>`;
+      }).join("");
+
+      if (order.note) {
+        formattedLines += `<div style="color: #555; font-size: 16px; margin-top: 12px; padding-left: 2px;">📝 ${escapeHtml(order.note)}</div>`;
+      }
+
+      return `<div class="detail-lines"><div class="detail-line primary" style="display:block; padding: 18px 22px;">${formattedLines}</div></div>`;
+    }
+
+    function closeModal() {
+      document.querySelectorAll(".modal").forEach(m => m.style.display = "none");
+    }
+
+    async function updateStatus(key, status, extra = {}, btn = null) {
+      if (!key) return;
+      if (processingKeys.has(key)) return;
+      processingKeys.add(key);
+
+      const oldText = btn ? btn.innerText : "";
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "處理中...";
+      }
+
+      try {
+        const response = await fetch(`${WORKER_BASE}/api/update`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key, status, ...extra })
+        });
+        if (!response.ok) throw new Error(`update failed: ${response.status}`);
+
+        // Apply local override immediately for responsiveness
+        localOverrides[key] = { status, time: Date.now() };
+        renderAll();
+
+        // Still fetch to keep in sync
+        await fetchOrders();
+      } catch (e) {
+        console.error(e);
+        alert("處理失敗，請稍後再試。");
+      } finally {
+        processingKeys.delete(key);
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = oldText;
+        }
+      }
+    }
+
+    async function reviewAccept(btn) {
+      if (!(reviewingOrder && reviewingOrder.key)) return;
+      await updateStatus(reviewingOrder.key, "ACCEPTED", {}, btn);
+      printOrder(reviewingOrder);
+      closeModal();
+      dismissNewAlert();
+      switchTab("live");
+    }
+
+    function reviewOpenChange() {
+      if (!(reviewingOrder && reviewingOrder.key)) return;
+      currentOrderKey = reviewingOrder.key;
+      closeModal();
+      document.getElementById("change-reason").value = "時間需調整";
+      document.getElementById("change-note").value = "";
+      const checkboxes = document.querySelectorAll(".sold-item");
+      if (checkboxes) checkboxes.forEach(cb => cb.checked = false);
+      onChangeReasonChange();
+      document.getElementById("changeModal").style.display = "flex";
+    }
+
+    function reviewOpenReject() {
+      if (!(reviewingOrder && reviewingOrder.key)) return;
+      currentOrderKey = reviewingOrder.key;
+      closeModal();
+      document.getElementById("reject-reason").selectedIndex = 0;
+      document.getElementById("rejectModal").style.display = "flex";
+    }
+
+    async function markReadyFromReview(btn) {
+      if (!(reviewingOrder && reviewingOrder.key)) return;
+      await updateStatus(reviewingOrder.key, "DONE", {}, btn);
+      closeModal();
+      switchTab("live");
+    }
+
+    async function reviewForceCancel(btn) {
+      if (!(reviewingOrder && reviewingOrder.key)) return;
+      if (!confirm("Hủy đơn hàng này do khách không phản hồi?")) return;
+      await updateStatus(reviewingOrder.key, "FORCE_REJECT", {}, btn);
+      closeModal();
+      switchTab("live");
+    }
+
+    function onChangeReasonChange() {
+      const reason = document.getElementById("change-reason").value;
+      const note = document.getElementById("change-note");
+      const itemsDiv = document.getElementById("change-items-div");
+
+      if (reason === "時間需調整") {
+        note.style.display = "block";
+        itemsDiv.style.display = "none";
+        note.placeholder = "建議時間/Gợi ý thời gian mới (VD: 11:00)";
+      } else {
+        note.style.display = "none";
+        itemsDiv.style.display = "block";
+      }
+    }
+
+    async function confirmAction(type, btn) {
+      const key = currentOrderKey;
+      const isChange = type === "CHANGE";
+      const status = isChange ? "CHANGED" : "REJECTED";
+      const reason = isChange ? document.getElementById("change-reason").value : document.getElementById("reject-reason").value;
+      let note = isChange ? document.getElementById("change-note").value.trim() : undefined;
+
+      if (isChange && reason === "時間需調整" && !note) {
+        alert("Vui lòng nhập thời gian gợi ý mới (Ví dụ: 11:00)!");
+        return;
+      }
+
+      if (isChange && reason === "口味售完") {
+        const checked = Array.from(document.querySelectorAll(".sold-item:checked")).map(cb => cb.value);
+        if (checked.length === 0) {
+          alert("Vui lòng chọn ít nhất một món đã hết!");
+          return;
+        }
+        note = checked.join(",");
+      }
+
+      await updateStatus(key, status, { reason, note }, btn);
+      closeModal();
+    }
+
+    function clearAlarmTimeouts() {
+      alarmTimeoutIds.forEach(id => clearTimeout(id));
+      alarmTimeoutIds = [];
+    }
+
+    function stopContinuousAlarm() {
+      if (alarmIntervalId) {
+        clearInterval(alarmIntervalId);
+        alarmIntervalId = null;
+      }
+      clearAlarmTimeouts();
+    }
+
+    function playTone(frequency, durationMs, type = "square", volume = 0.22) {
+      if (!audioCtx || audioCtx.state !== "running") return;
+      const oscillator = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      oscillator.type = type;
+      oscillator.frequency.value = frequency;
+      gain.gain.value = volume;
+
+      oscillator.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      oscillator.start();
+      setTimeout(() => oscillator.stop(), durationMs);
+    }
+
+    function playAlarmCycle() {
+      clearAlarmTimeouts();
+      playTone(880, 250, "square", 0.22);
+      alarmTimeoutIds.push(setTimeout(() => playTone(1040, 250, "square", 0.22), 320));
+      alarmTimeoutIds.push(setTimeout(() => playTone(880, 320, "square", 0.24), 680));
+    }
+
+    function startContinuousAlarm() {
+      if (!soundUnlocked) return;
+      if (alarmIntervalId) return;
+      playAlarmCycle();
+      alarmIntervalId = setInterval(() => {
+        playAlarmCycle();
+      }, 2200);
+    }
+
+    async function playNewOrderSound() {
+      if (!soundUnlocked) return;
+      try {
+        const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextCtor) return;
+        if (!audioCtx) audioCtx = new AudioContextCtor();
+        if (audioCtx.state === "suspended") await audioCtx.resume();
+        playAlarmCycle();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function testSound() {
+      await unlockSound();
+      await playNewOrderSound();
+    }
+
+    setInterval(fetchOrders, 1500);
+    fetchOrders();
+
+    // --- Thermal Print Implementation (temporarily disabled) ---
+    function printOrder(order) {
+      // Disabled - uncomment below to re-enable
+      return;
+      /*
+      if (!order) return;
+      let printFrame = document.getElementById('thermal-print-frame');
+      if (!printFrame) {
+        printFrame = document.createElement('iframe');
+        printFrame.id = 'thermal-print-frame';
+        printFrame.style.position = 'fixed';
+        printFrame.style.right = '0';
+        printFrame.style.bottom = '0';
+        printFrame.style.width = '0';
+        printFrame.style.height = '0';
+        printFrame.style.border = '0';
+        document.body.appendChild(printFrame);
+      }
+
+      const doc = printFrame.contentWindow.document;
+      
+      const html = `
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              body { font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif; margin: 0; padding: 10px; width: 100%; box-sizing: border-box; color: #000; }
+              .center { text-align: center; }
+              .title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+              .line { border-bottom: 1px dashed #000; margin: 10px 0; }
+              .bold { font-weight: bold; }
+              .item { margin-bottom: 6px; font-size: 16px; line-height: 1.4; }
+              .meta { font-size: 15px; margin-bottom: 4px; }
+              .highlight-time { font-size: 26px; font-weight: 1200; margin: 8px 0; border: 2px solid #000; padding: 4px; text-align: center; display: inline-block; width: 100%; box-sizing: border-box; }
+              @page { margin: 0; size: auto; }
+            </style>
+          </head>
+          <body>
+            <div class="center title">交易明細</div>
+            <div class="meta">編號: <span class="bold">${order.key}</span></div>
+            <div class="meta">顧客: ${order.customer || '顧客'}</div>
+            <div class="highlight-time">取餐: ${order.time || '-'}</div>
+            <div class="meta" style="font-size: 12px; color: #333;">下單: ${new Date(order.createdAt).toLocaleString('zh-TW')}</div>
+            <div class="line"></div>
+            <div class="items">
+              ${formatItemsForPrint(order)}
+            </div>
+            <div class="line"></div>
+            <div class="bold" style="font-size: 20px; text-align: right;">總計: $${order.total || 0}</div>
+            <div class="line"></div>
+            <div class="center meta">謝謝光臨</div>
+            <div style="height: 40px;"></div> <!-- Extra space for tearing -->
+          </body >
+        </html >
+        `;
+      
+      doc.open();
+      doc.write(html);
+      doc.close();
+
+      setTimeout(() => {
+        printFrame.contentWindow.focus();
+        printFrame.contentWindow.print();
+      }, 300);
+      */
+    }
+
+    function formatItemsForPrint(order) {
+      if (order.reason === "Đơn qua tin nhắn") {
+        return `< pre style = "white-space: pre-wrap; margin:0; font-family: inherit; font-size: 16px;" > ${ escapeHtml(order.content) }</pre > `;
+      }
+      const lines = String(order.content || "").split("\\n").map(l => l.trimEnd()).filter(l => l.trim() !== "");
+      return lines.map(line => {
+        const isSub = line.trimStart().startsWith("-") || line.trimStart().startsWith("•");
+        return `< div class="item" style = "${isSub ? 'margin-left: 10px; font-size: 14px;' : 'font-weight: bold; margin-top: 8px;'}" > ${ escapeHtml(line) }</div >`;
+      }).join("");
+    }
+  </script>
+</body>
+
+</html>
