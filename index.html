@@ -156,6 +156,32 @@
             style="max-width: 90%; max-height: 90%; border-radius: 16px; object-fit: contain; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     </div>
 
+    <div id="line-only-overlay" class="line-only-overlay">
+        <div class="line-only-card">
+            <div class="line-badge-icon">
+                <svg width="38" height="38" viewBox="0 0 24 24" fill="#06C755">
+                    <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.627.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.628.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.084.495.234l2.463 3.344V8.108c0-.345.282-.63.629-.63.346 0 .627.285.627.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.285.629.629 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+                </svg>
+            </div>
+            <h2 class="line-only-title">請使用手機 LINE 點餐</h2>
+            <div class="line-only-note">⚠️ 目前僅支援使用手機進行點餐</div>
+            <p class="line-only-desc">
+                本線上點餐系統<b>僅限於手機 LINE App 內使用</b>。<br>
+                請使用手機掃描下方 QR Code 或點擊按鈕開啟 LINE 進行點餐：
+            </p>
+            <div class="line-only-qr-wrapper">
+                <img id="line-liff-qrcode" class="line-only-qr-img" src="" alt="LINE QR Code">
+            </div>
+            <a id="btn-open-line" href="#" class="line-only-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#ffffff">
+                    <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.627.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.628.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.084.495.234l2.463 3.344V8.108c0-.345.282-.63.629-.63.346 0 .627.285.627.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.285.629.629 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+                </svg>
+                開啟 LINE 點餐
+            </a>
+            <div class="line-only-footer">幹城鹹水雞 • 線上點餐系統</div>
+        </div>
+    </div>
+
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
         <script>
 
@@ -347,14 +373,25 @@
                     if (mainNote) msg += `\n📝 總備註：${mainNote}`;
                     msg += `\n💰 總金額：$${currentTotal}`;
 
-                    let profile = { userId: "", displayName: "顧客 (Web)" };
-                    if (typeof liff !== 'undefined' && liff && liff.isLoggedIn && liff.isLoggedIn()) {
+                    // Security / Client Check: Block non-LINE client orders
+                    if (typeof liff === 'undefined' || !liff || typeof liff.isInClient !== 'function' || !liff.isInClient()) {
+                        showLineOnlyOverlay();
+                        return customAlert('本系統僅限於 LINE App 內點餐，請使用手機 LINE 官方帳號進行下單。');
+                    }
+
+                    let profile = { userId: "", displayName: "顧客" };
+                    if (liff && liff.isLoggedIn && liff.isLoggedIn()) {
                         try {
                             const p = await liff.getProfile();
                             if (p && p.userId) profile = p;
                         } catch (pErr) {
                             console.warn("Could not fetch LIFF profile:", pErr);
                         }
+                    }
+
+                    if (!profile.userId || !profile.userId.startsWith('U')) {
+                        showLineOnlyOverlay();
+                        return customAlert('無法取得 LINE 用戶身分，請由 LINE 官方帳號開啟點餐頁面。');
                     }
 
                     const orderPayload = {
@@ -375,7 +412,8 @@
                     });
 
                     if (!res.ok) {
-                        throw new Error(`API returned status ${res.status}`);
+                        const errData = await res.json().catch(() => ({}));
+                        throw new Error(errData.message || `API returned status ${res.status}`);
                     }
 
                     // Reset cart upon successful API creation
@@ -402,21 +440,8 @@
                     });
 
                 } catch (err) {
-                    console.warn("Primary API flow failed, trying LIFF sendMessages fallback:", err);
-
-                    try {
-                        if (typeof liff !== 'undefined' && liff && typeof liff.sendMessages === 'function') {
-                            await liff.sendMessages([{ type: 'text', text: msg }]);
-                            customAlert('<div style="margin-bottom: 15px;"><svg width="64" height="64" viewBox="0 0 24 24" fill="#10b981"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div><div style="font-size: 18px; line-height: 1.4; color: #111;">感謝您的訂單！餐點製作完成後，我們會再次通知您前來取餐，謝謝！</div>', () => {
-                                if (typeof liff.closeWindow === 'function') try { liff.closeWindow(); } catch (e) {}
-                            });
-                        } else {
-                            throw err;
-                        }
-                    } catch (liffErr) {
-                        console.error("LIFF sendMessages fallback failed:", liffErr);
-                        customAlert('傳送失敗，請重試或向店員反應。');
-                    }
+                    console.error("Order submission failed:", err);
+                    customAlert(err.message || '傳送失敗，請重試或向店員反應。');
                 } finally {
                     isSubmitting = false;
                     if (submitBtn) {
@@ -525,6 +550,23 @@
                 }
             }
 
+            function showLineOnlyOverlay() {
+                const targetLiffId = (storeConfig && storeConfig.liffId) ? storeConfig.liffId : '2010595300-lmVTCe1A';
+                const liffUrl = `https://liff.line.me/${targetLiffId}`;
+                const overlay = document.getElementById('line-only-overlay');
+                const qrImg = document.getElementById('line-liff-qrcode');
+                const btnOpenLine = document.getElementById('btn-open-line');
+                if (qrImg) {
+                    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(liffUrl)}&margin=4`;
+                }
+                if (btnOpenLine) {
+                    btnOpenLine.href = liffUrl;
+                }
+                if (overlay) {
+                    overlay.style.display = 'flex';
+                }
+            }
+
             async function initApp() {
                 await fetchMenu();
                 renderMenu();
@@ -535,6 +577,12 @@
                     await liff.init({ liffId: targetLiffId });
                 } catch (e) {
                     console.error("LIFF Init Error", e);
+                }
+
+                // Check if running inside LINE client
+                if (typeof liff === 'undefined' || !liff || typeof liff.isInClient !== 'function' || !liff.isInClient()) {
+                    showLineOnlyOverlay();
+                    return;
                 }
 
                 try {

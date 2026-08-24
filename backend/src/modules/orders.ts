@@ -21,6 +21,17 @@ export const MAX_INDEX = 200;
 export async function createOrder(request: Request, env: Env, ctx?: ExecutionContext): Promise<Response> {
   const data: any = await request.json();
 
+  // Validate that order comes from a legitimate LINE client (LINE userId format: U[0-9a-fA-F]{32})
+  const rawUserId = typeof data.userId === "string" ? data.userId.trim() : "";
+  const isValidLineUser = /^U[0-9a-fA-F]{32}$/.test(rawUserId);
+
+  if (!isValidLineUser) {
+    return json({
+      error: "ONLY_LINE_CLIENT_ALLOWED",
+      message: "本系統僅支援透過 LINE 官方帳號進行點餐。"
+    }, 403);
+  }
+
   // Taiwan time UTC+8
   const nowTaiwan = new Date(Date.now() + 8 * 3600000);
   const mm = String(nowTaiwan.getUTCMonth() + 1).padStart(2, "0");
@@ -37,7 +48,7 @@ export async function createOrder(request: Request, env: Env, ctx?: ExecutionCon
     content: data.content,
     status: "NEW",
     createdAt: Date.now(),
-    userId: data.userId,
+    userId: rawUserId,
     total: data.total,
     reason: data.reason || "",
     note: data.note || ""

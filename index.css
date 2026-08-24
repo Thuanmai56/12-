@@ -799,3 +799,115 @@ select:focus {
         padding-bottom: 60px;
     }
 }
+
+/* LINE Only Overlay (PC / Non-LINE browser blocking) */
+.line-only-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.line-only-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 24px;
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+    animation: alertShow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+}
+
+.line-badge-icon {
+    width: 64px;
+    height: 64px;
+    background: #e8f9ee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px auto;
+}
+
+.line-only-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+}
+
+.line-only-note {
+    display: inline-block;
+    background: #fff1f2;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
+
+.line-only-desc {
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+}
+
+.line-only-qr-wrapper {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.line-only-qr-img {
+    width: 190px;
+    height: 190px;
+    display: block;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+.line-only-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #06C755;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 14px 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(6, 199, 85, 0.35);
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.line-only-btn:hover, .line-only-btn:active {
+    background: #05b04b;
+    transform: translateY(-1px);
+}
+
+.line-only-footer {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 16px;
+    font-weight: 500;
+}
